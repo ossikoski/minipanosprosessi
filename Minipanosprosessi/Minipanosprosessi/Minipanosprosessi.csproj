@@ -110,5 +110,22 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\processImage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\valveClosed.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\valveOpen.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\controlValveClosed.png" />
+    <Resource Include="Media\controlValveOpen.png" />
+    <Resource Include="Media\heaterOff.png" />
+    <Resource Include="Media\heaterOn.png" />
+    <Resource Include="Media\pumpOff.png" />
+    <Resource Include="Media\pumpOn.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

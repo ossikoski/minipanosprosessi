@@ -24,5 +24,15 @@ namespace Minipanosprosessi
         {
             InitializeComponent();
         }
+
+        private void startButton_Click(object sender, RoutedEventArgs e)
+        {
+            valve1.Source = new BitmapImage(new Uri(@"Media\valveOpen.png", UriKind.Relative));
+        }
+
+        private void stopButton_Click(object sender, RoutedEventArgs e)
+        {
+            valve1.Source = new BitmapImage(new Uri(@"Media\valveClosed.png", UriKind.Relative));
+        }
     }
 }
