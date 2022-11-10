@@ -7,10 +7,10 @@
         mc:Ignorable="d" FontSize="18" FontFamily="Consolas"
         Title="Minipanosprosessi" Height="1000" Width="1200" 
         Background="LightGray" WindowStartupLocation="CenterScreen">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="20"/>
@@ -22,7 +22,7 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="1" Grid.Row="2">
+        <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -36,26 +36,125 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Column="0" Grid.Row="0" 
-                   Text="Testiteksti" Grid.ColumnSpan="1" 
-                   Margin="5,10,15,20" />
-            
-            <Button x:Name="startButton" Content="START"
-                    Grid.Column="0" Grid.Row="1" Background="Lime" 
-                    Margin="5" Click="startButton_Click"/>
-            
-            <Button x:Name="stopButton" Content="STOP"
-                    Grid.Column="0" Grid.Row="2" Background="Red" 
-                    Margin="5" Click="stopButton_Click"/>
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="0,50,0,0">
+                <TextBlock Text="YHTEYS PROSESSIIN" Margin="0,0,20,0"/>
+                <Ellipse x:Name="connectionLight" Width="25" Height="25" Stroke="Black" Fill="Red"/>
+            </StackPanel>
 
-            
+            <Button x:Name="connectButton" Grid.Column="0" Grid.Row="1" Content="YHDISTÄ" Margin="0,10,0,30" 
+                    Click="connectButton_Click"/>
+
+            <Button x:Name="startButton" Content="KÄYNNISTÄ"
+                    Grid.Column="0" Grid.Row="2" Background="Lime" 
+                    Margin="5,5,5,10" Click="startButton_Click"/>
+
+            <Button x:Name="stopButton" Content="KESKEYTÄ"
+                    Grid.Column="0" Grid.Row="3" Background="Red" 
+                    Margin="5,5,5,40" Click="stopButton_Click"/>
 
         </Grid>
 
-        <Canvas Grid.Column="2" Grid.Row="1">
-            <Image Source="Media\processImage.png" />
-            <Image x:Name="valve1" Canvas.Left="243" Source="Media\valveClosed.png" />
+        <Canvas Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+            <Image Source="Media\processImage.png"/>
+            <Image x:Name="V204image" Canvas.Left="243" Source="Media\valveClosed.png" />
+            <Image x:Name="V401image" Canvas.Left="588" Source="Media\valveClosed.png" />
+            <Image x:Name="V201image" Canvas.Left="99" Canvas.Top="587" Source="Media\valveClosed.png" />
+            <Image x:Name="V303image" Canvas.Left="338" Canvas.Top="587" Source="Media\valveClosed.png" />
+            <Image x:Name="V304image" Canvas.Left="483" Canvas.Top="587" Source="Media\valveClosed.png" />
+            <Image x:Name="V302image" Canvas.Left="159" Canvas.Top="518" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image x:Name="V404image" Canvas.Left="159" Canvas.Top="656" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image x:Name="V301image" Canvas.Left="410" Canvas.Top="518" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image x:Name="V103image" Canvas.Left="410" Canvas.Top="656" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+
+            <Image x:Name="V102image" Canvas.Left="530" Canvas.Top="125" Source="Media\controlValveClosed.png" />
+            <Image x:Name="V104image" Canvas.Left="684" Canvas.Top="567" Source="Media\controlValveClosed.png" />
+
+            <Image x:Name="P200image" Canvas.Left="220" Canvas.Top="570" Source="Media\pumpOff.png" />
+            <Image x:Name="P100image" Canvas.Left="578" Canvas.Top="570" Source="Media\pumpOff.png" RenderTransformOrigin="0.5,0.5" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="1" ScaleX="-1"/>
+                        <SkewTransform AngleY="0" AngleX="0"/>
+                        <RotateTransform Angle="0"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+
+
+            <ProgressBar x:Name="T200level" Canvas.Left="20" Canvas.Top="205" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+                <ProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </ProgressBar.RenderTransform>
+            </ProgressBar>
+
+            <ProgressBar x:Name="T100level" Canvas.Left="745" Canvas.Top="445" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+                <ProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </ProgressBar.RenderTransform>
+            </ProgressBar>
+
+            <ProgressBar x:Name="T400level" Canvas.Left="755" Canvas.Top="145" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+                <ProgressBar.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-90"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </ProgressBar.RenderTransform>
+            </ProgressBar>
+
+
         </Canvas>
-        
+
+
     </Grid>
+    
 </Window>
