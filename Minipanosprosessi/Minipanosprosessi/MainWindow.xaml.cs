@@ -27,19 +27,29 @@ namespace Minipanosprosessi
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
+            // Demotarkoituksiin
             V204image.Source = new BitmapImage(new Uri(@"Media\valveOpen.png", UriKind.Relative));
             T200level.Value = 80;
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
+            // Demotarkoituksiin
             V204image.Source = new BitmapImage(new Uri(@"Media\valveClosed.png", UriKind.Relative));
-            T200level.Value = 20;
+            connectionLight.Fill = Brushes.Red;
+            T200level.Value = 0;
         }
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
+            // Demotarkoituksiin
             connectionLight.Fill = Brushes.Lime;
+            MessageBox.Show("Yhteyden muodostus onnistui", "Info");
+        }
+
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

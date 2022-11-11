@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Minipanosprosessi"
         mc:Ignorable="d" FontSize="18" FontFamily="Consolas"
-        Title="Minipanosprosessi" Height="1000" Width="1200" 
+        Title="Minipanosprosessi - K&amp;K Automation" Height="1000" Width="1500" 
         Background="LightGray" WindowStartupLocation="CenterScreen">
 
     <Grid>
@@ -22,7 +22,7 @@
             <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Column="1" Grid.Row="1" Margin="0,0,100,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
@@ -33,35 +33,89 @@
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" Margin="0,50,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.Row="0" 
+                        Margin="0,50,0,0">
                 <TextBlock Text="YHTEYS PROSESSIIN" Margin="0,0,20,0"/>
-                <Ellipse x:Name="connectionLight" Width="25" Height="25" Stroke="Black" Fill="Red"/>
+                <Ellipse x:Name="connectionLight" Width="25" Height="25" 
+                         Stroke="Black" Fill="Red"/>
             </StackPanel>
 
-            <Button x:Name="connectButton" Grid.Column="0" Grid.Row="1" Content="YHDISTÄ" Margin="0,10,0,30" 
-                    Click="connectButton_Click"/>
+            <Button x:Name="connectButton" Grid.Column="0" Grid.Row="1" 
+                    Content="YHDISTÄ" Margin="0,10,0,30" 
+                    Click="connectButton_Click" Height="40" Width="150"/>
 
             <Button x:Name="startButton" Content="KÄYNNISTÄ"
                     Grid.Column="0" Grid.Row="2" Background="Lime" 
-                    Margin="5,5,5,10" Click="startButton_Click"/>
+                    Margin="5,5,5,10" Click="startButton_Click" Height="40" 
+                    Width="150"/>
 
             <Button x:Name="stopButton" Content="KESKEYTÄ"
                     Grid.Column="0" Grid.Row="3" Background="Red" 
-                    Margin="5,5,5,40" Click="stopButton_Click"/>
+                    Margin="5,5,5,40" Click="stopButton_Click" Width="150" 
+                    Height="40"/>
 
+            <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal" 
+                        Margin="0,0,0,10">
+                <TextBlock Text="Keittoaika (s):" Margin="0,0,20,0" Width="210"/>
+                <TextBox x:Name="cookingTimeTextBox" Width="100" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal" 
+                        Margin="0,0,0,10">
+                <TextBlock Text="Keittopaine (hPa):" Width="210" Margin="0,0,20,0"/>
+                <TextBox x:Name="cookingPressureTextBox" Width="100" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="0" Grid.Row="6" Orientation="Horizontal" 
+                        Margin="0,0,0,10">
+                <TextBlock Text="Keittolämpötila (°C):" Margin="0,0,20,0" Width="210"/>
+                <TextBox x:Name="cookingTemperatureTextBox" Width="100" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="0" Grid.Row="7" Orientation="Horizontal" 
+                        Margin="0,0,0,20">
+                <TextBlock Text="Kyllästysaika (s):" Width="210" Margin="0,0,20,0"/>
+                <TextBox x:Name="impregnationTimeTextBox" Width="100" />
+            </StackPanel>
+
+            <Button x:Name="settingsButton" Grid.Column="0" Grid.Row="8"
+                    Content="TALLENNA ASETUKSET" Click="settingsButton_Click" 
+                    Margin="0,0,0,100" Height="40" Width="220"/>
+
+            <StackPanel Grid.Column="0" Grid.Row="9" Orientation="Vertical">
+                <TextBlock Text="SEKVENSSIN VAIHE:" Margin="0,0,0,5"/>
+                <TextBlock x:Name="sequenceTextBlock" Text="abc123" 
+                           Background="White" />
+            </StackPanel>
         </Grid>
 
         <Canvas Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
             <Image Source="Media\processImage.png"/>
-            <Image x:Name="V204image" Canvas.Left="243" Source="Media\valveClosed.png" />
-            <Image x:Name="V401image" Canvas.Left="588" Source="Media\valveClosed.png" />
-            <Image x:Name="V201image" Canvas.Left="99" Canvas.Top="587" Source="Media\valveClosed.png" />
-            <Image x:Name="V303image" Canvas.Left="338" Canvas.Top="587" Source="Media\valveClosed.png" />
-            <Image x:Name="V304image" Canvas.Left="483" Canvas.Top="587" Source="Media\valveClosed.png" />
-            <Image x:Name="V302image" Canvas.Left="159" Canvas.Top="518" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+            
+            <Image x:Name="V204image" Canvas.Left="243" 
+                   Source="Media\valveClosed.png" />
+            
+            <Image x:Name="V401image" Canvas.Left="588" 
+                   Source="Media\valveClosed.png" />
+            
+            <Image x:Name="V201image" Canvas.Left="99" Canvas.Top="587" 
+                   Source="Media\valveClosed.png" />
+            
+            <Image x:Name="V303image" Canvas.Left="338" Canvas.Top="587" 
+                   Source="Media\valveClosed.png" />
+            
+            <Image x:Name="V304image" Canvas.Left="483" Canvas.Top="587" 
+                   Source="Media\valveClosed.png" />
+            
+            <Image x:Name="V302image" Canvas.Left="159" Canvas.Top="518" 
+                   Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -71,7 +125,9 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
-            <Image x:Name="V404image" Canvas.Left="159" Canvas.Top="656" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+            
+            <Image x:Name="V404image" Canvas.Left="159" Canvas.Top="656" 
+                   Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -81,7 +137,9 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
-            <Image x:Name="V301image" Canvas.Left="410" Canvas.Top="518" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+            
+            <Image x:Name="V301image" Canvas.Left="410" Canvas.Top="518" 
+                   Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -91,7 +149,9 @@
                     </TransformGroup>
                 </Image.RenderTransform>
             </Image>
-            <Image x:Name="V103image" Canvas.Left="410" Canvas.Top="656" Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5" >
+            
+            <Image x:Name="V103image" Canvas.Left="410" Canvas.Top="656" 
+                   Source="Media\valveClosed.png" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -102,11 +162,17 @@
                 </Image.RenderTransform>
             </Image>
 
-            <Image x:Name="V102image" Canvas.Left="530" Canvas.Top="125" Source="Media\controlValveClosed.png" />
-            <Image x:Name="V104image" Canvas.Left="684" Canvas.Top="567" Source="Media\controlValveClosed.png" />
+            <Image x:Name="V102image" Canvas.Left="530" Canvas.Top="125" 
+                   Source="Media\controlValveClosed.png" />
+            
+            <Image x:Name="V104image" Canvas.Left="684" Canvas.Top="567" 
+                   Source="Media\controlValveClosed.png" />
 
-            <Image x:Name="P200image" Canvas.Left="220" Canvas.Top="570" Source="Media\pumpOff.png" />
-            <Image x:Name="P100image" Canvas.Left="578" Canvas.Top="570" Source="Media\pumpOff.png" RenderTransformOrigin="0.5,0.5" >
+            <Image x:Name="P200image" Canvas.Left="220" Canvas.Top="570" 
+                   Source="Media\pumpOff.png" />
+
+            <Image x:Name="P100image" Canvas.Left="578" Canvas.Top="570" 
+                   Source="Media\pumpOff.png" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform ScaleY="1" ScaleX="-1"/>
@@ -117,8 +183,12 @@
                 </Image.RenderTransform>
             </Image>
 
+            <Image x:Name="E100image" Canvas.Left="730" Canvas.Top="460" 
+                   Source="Media\heaterOff.png"/>
 
-            <ProgressBar x:Name="T200level" Canvas.Left="20" Canvas.Top="205" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+            <ProgressBar x:Name="T200level" Canvas.Left="20" Canvas.Top="205" 
+                         Width="130" Height="20" RenderTransformOrigin="0.5,0.5" 
+                         Foreground="Blue">
                 <ProgressBar.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -129,7 +199,9 @@
                 </ProgressBar.RenderTransform>
             </ProgressBar>
 
-            <ProgressBar x:Name="T100level" Canvas.Left="745" Canvas.Top="445" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+            <ProgressBar x:Name="T100level" Canvas.Left="745" Canvas.Top="445" 
+                         Width="130" Height="20" RenderTransformOrigin="0.5,0.5" 
+                         Foreground="Blue">
                 <ProgressBar.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -140,7 +212,9 @@
                 </ProgressBar.RenderTransform>
             </ProgressBar>
 
-            <ProgressBar x:Name="T400level" Canvas.Left="755" Canvas.Top="145" Width="130" Height="20" RenderTransformOrigin="0.5,0.5" Foreground="Blue">
+            <ProgressBar x:Name="T400level" Canvas.Left="755" Canvas.Top="145" 
+                         Width="130" Height="20" RenderTransformOrigin="0.5,0.5" 
+                         Foreground="Blue">
                 <ProgressBar.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -151,10 +225,47 @@
                 </ProgressBar.RenderTransform>
             </ProgressBar>
 
+            <StackPanel Canvas.Left="400" Canvas.Top="250" Orientation="Vertical">
+                <TextBlock Text="PI300:" Background="White" />
+                <TextBlock x:Name="PI300textBlock" Text="XXX hPa" Margin="0,0,0,30" 
+                           Background="White" />
+                <TextBlock Text="TI300:" Background="White" />
+                <TextBlock x:Name="TI300textBlock" Text="XX.X°C" 
+                           Background="White"/>
+            </StackPanel>
 
+            <StackPanel Canvas.Left="8" Canvas.Top="151" Orientation="Vertical">
+                <TextBlock Text="LI200:" Background="White" />
+                <TextBlock x:Name="LI200textBlock" Text="XXX mm" 
+                           Background="White"/>
+            </StackPanel>
+
+            <StackPanel Canvas.Left="742" Canvas.Top="91" Orientation="Vertical">
+                <TextBlock Text="LI400:" Background="White" />
+                <TextBlock x:Name="LI400textBlock" Text="XXX mm" 
+                           Background="White" />
+            </StackPanel>
+
+            <StackPanel Canvas.Left="732" Canvas.Top="391" Orientation="Vertical">
+                <TextBlock Text="LI100:" Background="White" />
+                <TextBlock x:Name="LI100textBlock" Text="XXX mm" 
+                           Background="White" />
+            </StackPanel>
+
+            <StackPanel Canvas.Left="650" Canvas.Top="470" Orientation="Vertical">
+                <TextBlock Text="TI100:" Background="White" />
+                <TextBlock x:Name="TI100textBlock" Text="XX.X°C" 
+                           Background="White" />
+            </StackPanel>
+
+            <StackPanel Canvas.Left="660" Canvas.Top="630" Orientation="Vertical">
+                <TextBlock Text="FI100:" Background="White" />
+                <TextBlock x:Name="FI100textBlock" Text="X.XX l/min" 
+                           Background="White" />
+            </StackPanel>
+
+            <TextBlock x:Name="V104textBlock" Text="XXX%" Canvas.Left="535" 
+                       Canvas.Top="185" Background="White" />
         </Canvas>
-
-
     </Grid>
-    
 </Window>
