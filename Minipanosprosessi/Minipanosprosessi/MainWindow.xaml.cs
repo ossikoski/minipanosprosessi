@@ -20,73 +20,34 @@ namespace Minipanosprosessi
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IProcessObserver
     {
-        private MppClient client;
+        private Communication communication;
+        private ControlSystem controlSystem;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            communication = new Communication();
+            controlSystem = new ControlSystem();
+
+            // TODO: add observers
         }
 
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
-            // Demo
-            client.SetOnOffItem("V201", true);
-            client.SetOnOffItem("V303", true);
-            client.SetOnOffItem("P100_P200_PRESET", true);
-            client.SetPumpControl("P200", 100);
-            client.SetOnOffItem("V204", true);
-            client.SetOnOffItem("V301", true);
+            controlSystem.Start();
         }
 
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
-            // Demotarkoituksiin
-            V204image.Source = new BitmapImage(new Uri(@"Media\valveClosed.png", UriKind.Relative));
-            connectionLight.Fill = Brushes.Red;
-            T200level.Value = 0;
+            controlSystem.Stop();
         }
 
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
-            ConnectionParamsHolder par = new ConnectionParamsHolder("opc.tcp://localhost:8087");
-            client = new MppClient(par);
-
-            client.ConnectionStatus += new MppClient.ConnectionStatusEventHandler(ConnectionEvent);
-            client.ProcessItemsChanged += new MppClient.ProcessItemsChangedEventHandler(ProcessItemsEvent);
-
-            client.Init();
-
-            // Temperature
-            client.AddToSubscription("TI100");
-            client.AddToSubscription("TI300");
-            // Flow
-            client.AddToSubscription("FI100");
-            // Level
-            client.AddToSubscription("LI100");
-            client.AddToSubscription("LI200");
-            client.AddToSubscription("LI400");
-            // Pressure
-            client.AddToSubscription("PI300");
-            // Control valve
-            client.AddToSubscription("V102");
-            client.AddToSubscription("V104");
-            // On/off valve
-            client.AddToSubscription("V103");
-            client.AddToSubscription("V201");
-            client.AddToSubscription("V204");
-            client.AddToSubscription("V301");
-            client.AddToSubscription("V302");
-            client.AddToSubscription("V303");
-            client.AddToSubscription("V304");
-            client.AddToSubscription("V401");
-            client.AddToSubscription("V404");
-            // Pump
-            client.AddToSubscription("P100");
-            client.AddToSubscription("P200");
-            // Heater
-            client.AddToSubscription("E100");
+            communication.Connect();
         }
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
@@ -94,34 +55,9 @@ namespace Minipanosprosessi
 
         }
 
-        private void ConnectionEvent(object source, ConnectionStatusEventArgs args)
-        {
-            if(args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
-            {
-                connectionLight.Dispatcher.Invoke(() =>
-                {
-                    connectionLight.Fill = Brushes.Lime;
-                });
-                MessageBox.Show("Yhteyden muodostus onnistui", "Info");
-            }
-            else if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connecting))
-            {
-                connectionLight.Dispatcher.Invoke(() =>
-                {
-                    connectionLight.Fill = Brushes.Yellow;
-                });
-            }
-            else
-            {
-                connectionLight.Dispatcher.Invoke(() =>
-                {
-                    connectionLight.Fill = Brushes.Red;
-                });
-            }
-        }
-
         private void setTextBlock(TextBlock textBlock, MppValue value, string unit)
         {
+            // TODO: vaihda Invoke -> BeginInvoke
             textBlock.Dispatcher.Invoke(() =>
             {
                 string text;
@@ -133,6 +69,7 @@ namespace Minipanosprosessi
 
         private void setLevelIndicator(ProgressBar levelIndicator, MppValue value, int maxValue)
         {
+            // TODO: vaihda Invoke -> BeginInvoke
             levelIndicator.Dispatcher.Invoke(() =>
             {
                 double percentage;
@@ -145,11 +82,6 @@ namespace Minipanosprosessi
 
         private void changeItemImage(Image image, string indicatorType, MppValue value)
         {
-            Console.WriteLine(image.ToString());
-            Console.WriteLine(indicatorType);
-            Console.WriteLine(value.ToString());
-
-
             bool bValue = false;
             int intValue = 0;
             string path;
@@ -182,16 +114,46 @@ namespace Minipanosprosessi
                     break;
             }
 
+            // TODO: vaihda Invoke -> BeginInvoke
             image.Dispatcher.Invoke(() =>
             {
                 image.Source = new BitmapImage(new Uri(path, UriKind.Relative));
             });
         }
 
-        private void ProcessItemsEvent(object source, ProcessItemChangedEventArgs args)
+        
+
+        public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
         {
-            
-            foreach(var item in args.ChangedItems)
+            if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
+            {
+                // TODO: vaihda Invoke -> BeginInvoke
+                connectionLight.Dispatcher.Invoke(() =>
+                {
+                    connectionLight.Fill = Brushes.Lime;
+                });
+            }
+            else if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connecting))
+            {
+                // TODO: vaihda Invoke -> BeginInvoke
+                connectionLight.Dispatcher.Invoke(() =>
+                {
+                    connectionLight.Fill = Brushes.Yellow;
+                });
+            }
+            else
+            {
+                // TODO: vaihda Invoke -> BeginInvoke
+                connectionLight.Dispatcher.Invoke(() =>
+                {
+                    connectionLight.Fill = Brushes.Red;
+                });
+            }
+        }
+
+        public void UpdateProcessItems(ProcessItemChangedEventArgs args)
+        {
+            foreach (var item in args.ChangedItems)
             {
                 switch (item.Key)
                 {
