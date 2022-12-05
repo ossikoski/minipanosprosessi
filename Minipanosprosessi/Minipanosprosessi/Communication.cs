@@ -69,6 +69,8 @@ namespace Minipanosprosessi
             client.AddToSubscription("LS-300");
             client.AddToSubscription("LS-200");
             client.AddToSubscription("LA+100");
+
+            isConnected = true;
         }
 
         public void AddObserver(IProcessObserver observer)
