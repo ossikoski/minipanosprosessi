@@ -30,7 +30,7 @@ namespace Minipanosprosessi
             InitializeComponent();
 
             communication = new Communication();
-            controlSystem = new ControlSystem();
+            controlSystem = new ControlSystem(communication);
 
             // TODO: add observers
         }

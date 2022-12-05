@@ -9,7 +9,8 @@ namespace Minipanosprosessi
 {
     class Communication
     {
-        private MppClient client = null;
+        private MppClient client;
+        bool isConnected = false;
         private HashSet<IProcessObserver> observers = null;
         private object lockObject;
 
@@ -21,10 +22,7 @@ namespace Minipanosprosessi
 
         public void Connect()
         {
-            if(client != null)
-            {
-                client.Dispose();
-            }
+            if(isConnected){return;}  // TODO ? Jos tarvii uudelleenyhdistää
 
             ConnectionParamsHolder par = new ConnectionParamsHolder("opc.tcp://localhost:8087");
             client = new MppClient(par);
@@ -65,6 +63,7 @@ namespace Minipanosprosessi
             client.AddToSubscription("E100");
 
             // TODO: Limit switches
+            isConnected = false;
         }
 
         public void AddObserver(IProcessObserver observer)
@@ -91,6 +90,38 @@ namespace Minipanosprosessi
 
         private void NotifyObserversProcessItems(object source, ProcessItemChangedEventArgs args)
         {
+
+        }
+
+        /// <summary>
+        /// Set an on off item value.
+        /// </summary>
+        /// <param name="item">Item name</param>
+        /// <param name="value">On or off value</param>
+        public void setItem(string item, bool value)
+        {
+        }
+
+        /// <summary>
+        /// Set item control valve or pump value.
+        /// </summary>
+        /// <param name="item">Item name</param>
+        /// <param name="value">Value to set. If item is a pump, can only be 0 or 100.</param>
+        public void setItem(string item, int value)
+        {
+            if(item.StartsWith("V"))
+            {
+                
+            }
+            else if (item.StartsWith("P"))
+            {
+                /*
+                if(value != 100 || value != 0){
+                    throw new ArgumentException("Power parameter can only be 0 or 100");
+
+                }
+                */
+            }
 
         }
     }
