@@ -32,7 +32,18 @@ namespace Minipanosprosessi
             communication = new Communication();
             controlSystem = new ControlSystem(communication);
 
-            // TODO: add observers
+            // Add observers
+            communication.AddObserver(controlSystem);
+            communication.AddObserver(this);
+        }
+
+        public struct Settings
+        {
+            public double cookingTime;
+            public double cookingPressure;
+            public double cookingTemperature;
+            public double impregnationTime;
+
         }
 
         private void startButton_Click(object sender, RoutedEventArgs e)
@@ -52,7 +63,16 @@ namespace Minipanosprosessi
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
+            Settings settings = new Settings();
 
+            settings.cookingTime = Convert.ToDouble(cookingTimeTextBox.Text);
+            settings.cookingPressure = Convert.ToDouble(cookingPressureTextBox.Text);
+            settings.cookingTemperature = Convert.ToDouble(cookingTemperatureTextBox.Text);
+            settings.impregnationTime = Convert.ToDouble(impregnationTimeTextBox.Text);
+
+            // TODO: poikkeustenkäsittely
+
+            controlSystem.UpdateSettings(settings);
         }
 
         private void setTextBlock(TextBlock textBlock, MppValue value, string unit)

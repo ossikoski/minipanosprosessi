@@ -58,14 +58,19 @@ namespace Minipanosprosessi
             isStarted = false;
         }
 
+        public void UpdateSettings(MainWindow.Settings settings)
+        {
+
+        }
+
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         private void RunLoop()
