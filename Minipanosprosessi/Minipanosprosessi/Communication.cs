@@ -13,6 +13,9 @@ namespace Minipanosprosessi
         private HashSet<IProcessObserver> observers = null;
         private object lockObject;
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Communication()
         {
             lockObject = new object();
@@ -63,8 +66,11 @@ namespace Minipanosprosessi
             client.AddToSubscription("P200");
             // Heater
             client.AddToSubscription("E100");
-
-            // TODO: Limit switches
+            // Limit switches
+            client.AddToSubscription("LS+300");
+            client.AddToSubscription("LS-300");
+            client.AddToSubscription("LS-200");
+            client.AddToSubscription("LA+100");
         }
 
         public void AddObserver(IProcessObserver observer)
@@ -86,12 +92,39 @@ namespace Minipanosprosessi
 
         private void NotifyObserversConnectionStatus(object source, ConnectionStatusEventArgs args)
         {
+            ConnectionStatusEventArgs connectionStatusCopy = null;
+            IProcessObserver[] observersCopy = null;
+
+            lock (lockObject)
+            {
+                connectionStatusCopy = args;
+                observersCopy = new IProcessObserver[observers.Count];
+                observers.CopyTo(observersCopy);
+            }
+
+            foreach(IProcessObserver o in observersCopy)
+            {
+                o.UpdateConnectionStatus(connectionStatusCopy);
+            }
 
         }
 
         private void NotifyObserversProcessItems(object source, ProcessItemChangedEventArgs args)
         {
+            ProcessItemChangedEventArgs processItemsCopy = null;
+            IProcessObserver[] observersCopy = null;
 
+            lock (lockObject)
+            {
+                processItemsCopy = args;
+                observersCopy = new IProcessObserver[observers.Count];
+                observers.CopyTo(observersCopy);
+            }
+
+            foreach (IProcessObserver o in observersCopy)
+            {
+                o.UpdateProcessItems(processItemsCopy);
+            }
         }
     }
 }

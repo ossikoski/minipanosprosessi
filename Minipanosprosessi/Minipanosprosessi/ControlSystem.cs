@@ -11,7 +11,7 @@ namespace Minipanosprosessi
     {
         public ControlSystem()
         {
-
+            
         }
 
         public void Start()
@@ -24,14 +24,19 @@ namespace Minipanosprosessi
 
         }
 
+        public void UpdateSettings(MainWindow.Settings settings)
+        {
+
+        }
+
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
