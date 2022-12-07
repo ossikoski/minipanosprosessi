@@ -57,7 +57,8 @@ namespace Minipanosprosessi
         public void Start()
         {
             isStarted = true;
-            RunLoop();
+            var task = new System.Threading.Tasks.Task(() => RunLoop());
+            task.Start();
         }
 
         public void Stop()
@@ -157,6 +158,7 @@ namespace Minipanosprosessi
             // Phase 1:
             communicationObject.setItem("V201", true);
             communicationObject.setItem("V303", true);
+            communicationObject.setItem("P100_P200_PRESET", true);
             communicationObject.setItem("P200", 100);
             communicationObject.setItem("V204", true);
             communicationObject.setItem("V301", true);
@@ -164,7 +166,7 @@ namespace Minipanosprosessi
             while (!indicators.LSp300){}  // TODO: Failsafe?, miten toimii säikeiden kanssa?
 
             // Phase 2:
-            communicationObject.setItem("V104", false);
+            communicationObject.setItem("V104", 0);
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V401", false);
             Thread.Sleep(5000);  // TODO: Sleep(Ti), asetuksista
@@ -173,7 +175,7 @@ namespace Minipanosprosessi
             communicationObject.setItem("V201", false);
             communicationObject.setItem("V303", false);
             communicationObject.setItem("P200", 0);
-            communicationObject.setItem("V104", false);
+            communicationObject.setItem("V104", 0);
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V301", false);
             communicationObject.setItem("V401", false);

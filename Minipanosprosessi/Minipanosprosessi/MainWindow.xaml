@@ -59,30 +59,30 @@
             <Button x:Name="stopButton" Content="KESKEYTÄ"
                     Grid.Column="0" Grid.Row="3" Background="Red" 
                     Margin="5,5,5,40" Click="stopButton_Click" Width="150" 
-                    Height="40"/>
+                    Height="40" IsEnabled="False"/>
 
             <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Keittoaika (s):" Margin="0,0,20,0" Width="210"/>
-                <TextBox x:Name="cookingTimeTextBox" Width="100" />
+                <TextBox x:Name="cookingTimeTextBox" Text="100" Width="100" />
             </StackPanel>
 
             <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Keittopaine (hPa):" Width="210" Margin="0,0,20,0"/>
-                <TextBox x:Name="cookingPressureTextBox" Width="100" />
+                <TextBox x:Name="cookingPressureTextBox" Text="100" Width="100" />
             </StackPanel>
 
             <StackPanel Grid.Column="0" Grid.Row="6" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Keittolämpötila (°C):" Margin="0,0,20,0" Width="210"/>
-                <TextBox x:Name="cookingTemperatureTextBox" Width="100" />
+                <TextBox x:Name="cookingTemperatureTextBox" Text="50.0" Width="100" />
             </StackPanel>
 
             <StackPanel Grid.Column="0" Grid.Row="7" Orientation="Horizontal" 
                         Margin="0,0,0,20">
                 <TextBlock Text="Kyllästysaika (s):" Width="210" Margin="0,0,20,0"/>
-                <TextBox x:Name="impregnationTimeTextBox" Width="100" />
+                <TextBox x:Name="impregnationTimeTextBox" Text="100" Width="100" />
             </StackPanel>
 
             <Button x:Name="settingsButton" Grid.Column="0" Grid.Row="8"

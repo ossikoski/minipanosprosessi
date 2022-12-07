@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,60 +47,111 @@ namespace Minipanosprosessi
 
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
             controlSystem.Start();
+            startButton.IsEnabled = false;
+            stopButton.IsEnabled = true;
+            settingsButton.IsEnabled = false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
             controlSystem.Stop();
+            startButton.IsEnabled = true;
+            stopButton.IsEnabled = false;
+            settingsButton.IsEnabled = true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
             communication.Connect();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();
 
-            settings.cookingTime = Convert.ToDouble(cookingTimeTextBox.Text);
-            settings.cookingPressure = Convert.ToDouble(cookingPressureTextBox.Text);
-            settings.cookingTemperature = Convert.ToDouble(cookingTemperatureTextBox.Text);
-            settings.impregnationTime = Convert.ToDouble(impregnationTimeTextBox.Text);
+            try
+            {
+                settings.cookingTime = double.Parse(cookingTimeTextBox.Text, CultureInfo.InvariantCulture);
+                settings.cookingPressure = double.Parse(cookingPressureTextBox.Text, CultureInfo.InvariantCulture);
+                settings.cookingTemperature = double.Parse(cookingTemperatureTextBox.Text, CultureInfo.InvariantCulture);
+                settings.impregnationTime = double.Parse(impregnationTimeTextBox.Text, CultureInfo.InvariantCulture);
 
-            // TODO: poikkeustenkäsittely
-
-            controlSystem.UpdateSettings(settings);
+                controlSystem.UpdateSettings(settings);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Asetusten arvot ovat virheelliset.\n\nInfo:\n" + ex.Message, "Virhe");
+            }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="textBlock"></param>
+        /// <param name="value"></param>
+        /// <param name="unit"></param>
         private void setTextBlock(TextBlock textBlock, MppValue value, string unit)
         {
+            string text;
+            text = value.GetValue().ToString();
+            text += unit;
+
             // TODO: vaihda Invoke -> BeginInvoke
             textBlock.Dispatcher.Invoke(() =>
             {
-                string text;
-                text = value.GetValue().ToString();
-                text += unit;
                 textBlock.Text = text;
             });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="levelIndicator"></param>
+        /// <param name="value"></param>
+        /// <param name="maxValue"></param>
         private void setLevelIndicator(ProgressBar levelIndicator, MppValue value, int maxValue)
         {
+            double percentage;
+            int intValue;
+            intValue = (int)value.GetValue();
+            percentage = ((double)intValue / maxValue) * 100;
+
             // TODO: vaihda Invoke -> BeginInvoke
             levelIndicator.Dispatcher.Invoke(() =>
             {
-                double percentage;
-                int intValue;
-                intValue = (int) value.GetValue();
-                percentage = ((double) intValue / maxValue) * 100;
                 levelIndicator.Value = percentage;
             });
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="indicatorType"></param>
+        /// <param name="value"></param>
         private void changeItemImage(Image image, string indicatorType, MppValue value)
         {
             bool bValue = false;
@@ -142,7 +194,10 @@ namespace Minipanosprosessi
         }
 
         
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
         {
             if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
@@ -171,6 +226,10 @@ namespace Minipanosprosessi
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
             foreach (var item in args.ChangedItems)

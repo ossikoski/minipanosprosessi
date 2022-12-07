@@ -134,6 +134,7 @@ namespace Minipanosprosessi
         /// <param name="value">On or off value</param>
         public void setItem(string item, bool value)
         {
+            client.SetOnOffItem(item, value);
         }
 
         /// <summary>
@@ -145,16 +146,21 @@ namespace Minipanosprosessi
         {
             if(item.StartsWith("V"))
             {
-                
+                if(0 <= value && value <= 100)
+                {
+                    client.SetValveOpening(item, value);
+                }
             }
             else if (item.StartsWith("P"))
             {
-                /*
-                if(value != 100 || value != 0){
-                    throw new ArgumentException("Power parameter can only be 0 or 100");
-
+                if(value == 0 || value == 100)
+                {
+                    client.SetPumpControl(item, value);
                 }
-                */
+                else 
+                {
+                    throw new ArgumentException("Power parameter can only be 0 or 100");
+                }
             }
 
         }
