@@ -25,6 +25,9 @@ namespace Minipanosprosessi
     }
     public struct Indicators
     {
+        /// <summary>
+        /// 
+        /// </summary>
         // alkuarvot (20, 20, 0, 216, 90, 90, 0, false, true, true, true)
         public double TI100;
         public double TI300;
@@ -38,14 +41,25 @@ namespace Minipanosprosessi
         public bool LSm200;
         public bool LA100;  // false -> alarm is active and level is under 100)
     }
-    
+    public struct Settings
+    {
+        /// <summary>
+        /// Asetukset 
+        /// </summary>
+        public double cookingTime;
+        public double cookingPressure;
+        public double cookingTemperature;
+        public double impregnationTime;
+
+    }
+
     // TODO siirrä public struct Settings tänne ja alusta rakentajassa
     class ControlSystem : IProcessObserver
     {
         Communication communicationObject;
         bool isStarted;
         Stage stage;
-        MainWindow.Settings settingsObject;
+        Settings settings;
         Indicators indicators;
         public ControlSystem(Communication communication)
         {
@@ -53,6 +67,7 @@ namespace Minipanosprosessi
             isStarted = false;
             stage = Stage.impregnation;
             indicators = new Indicators();
+            settings = new Settings();
         }
         public void Start()
         {
@@ -66,9 +81,9 @@ namespace Minipanosprosessi
             isStarted = false;
         }
 
-        public void UpdateSettings(MainWindow.Settings settings)
+        public void UpdateSettings(Settings settingsToSet)
         {
-            settingsObject = settings;
+            settings = settingsToSet;
         }
 
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
@@ -169,7 +184,8 @@ namespace Minipanosprosessi
             communicationObject.setItem("V104", 0);
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V401", false);
-            Thread.Sleep(5000);  // TODO: Sleep(Ti), asetuksista
+            int Ti = (int)settings.impregnationTime * 1000;
+            Thread.Sleep(Ti);
 
             // Phase 3
             communicationObject.setItem("V201", false);

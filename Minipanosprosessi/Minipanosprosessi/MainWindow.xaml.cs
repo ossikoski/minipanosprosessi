@@ -38,15 +38,6 @@ namespace Minipanosprosessi
             communication.AddObserver(this);
         }
 
-        public struct Settings
-        {
-            public double cookingTime;
-            public double cookingPressure;
-            public double cookingTemperature;
-            public double impregnationTime;
-
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -90,8 +81,10 @@ namespace Minipanosprosessi
         /// <param name="e"></param>
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
+            // TODO: parametreja ei voi muokata sekvenssin suorituksen aikana
             Settings settings = new Settings();
 
+            // TODO Lisää validointia asetuksille?
             try
             {
                 settings.cookingTime = double.Parse(cookingTimeTextBox.Text, CultureInfo.InvariantCulture);
