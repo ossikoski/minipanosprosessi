@@ -101,18 +101,31 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Set text (only) for the inidcator/valve text boxes
         /// </summary>
-        /// <param name="textBlock"></param>
-        /// <param name="value"></param>
-        /// <param name="unit"></param>
-        private void setTextBlock(TextBlock textBlock, MppValue value, string unit)
+        /// <param name="textBlock">Text block component name.</param>
+        /// <param name="value">Text value to set for the text block.</param>
+        /// <param name="unit">Optional unit that will be added to the end of the value text.</param>
+        private void setTextBlock(TextBlock textBlock, MppValue value, string unit = "")
         {
             string text;
             text = value.GetValue().ToString();
             text += unit;
 
             // TODO: vaihda Invoke -> BeginInvoke
+            textBlock.Dispatcher.Invoke(() =>
+            {
+                textBlock.Text = text;
+            });
+        }
+        
+        /// <summary>
+        /// Set text for the TextBlock sequenceTextBlock
+        /// </summary>
+        /// <param name="text">Text to set</param>
+        public void setSequenceStage(string text)
+        {
+            TextBlock textBlock = sequenceTextBlock;
             textBlock.Dispatcher.Invoke(() =>
             {
                 textBlock.Text = text;
