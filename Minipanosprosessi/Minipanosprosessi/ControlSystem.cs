@@ -162,19 +162,23 @@ namespace Minipanosprosessi
                 switch (stage)
                 {
                     case Stage.impregnation:
-                        mainWindowObject.setSequenceStage("Impregnation");
+                        mainWindowObject.setSequenceStage("Kyllästys");
                         Impregnation();
                         break;
                     case Stage.black_liquor_fill:
+                        mainWindowObject.setSequenceStage("Mustalipeän täyttö");
                         BlackLiquorFill();
                         break;
                     case Stage.white_liquor_fill:
+                        mainWindowObject.setSequenceStage("Valkolipeän täyttö");
                         WhiteLiquorFill();
                         break;
                     case Stage.cooking:
+                        mainWindowObject.setSequenceStage("Keitto");
                         Cooking();
                         break;
                     case Stage.discharge:
+                        mainWindowObject.setSequenceStage("Purku");
                         Discharge();
                         break;
                     default:
@@ -204,11 +208,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V401", false);
 
-            lock (lockObject)
-            {
-                int Ti = (int)settings.impregnationTime * 1000;
-                Thread.Sleep(Ti);  // TODO lukko
-            }
+            // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana:
+            int Ti = (int)settings.impregnationTime * 1000;
+            Thread.Sleep(Ti);
 
             // Phase 3
             communicationObject.setItem("V201", false);
@@ -221,28 +223,80 @@ namespace Minipanosprosessi
 
             // Phase 4
             communicationObject.setItem("V204", true);
-            Thread.Sleep(1000);  // TODO: Sleep(Td), asetuksista? Vai ei asetuksista?
+            Thread.Sleep(1000);
             
             // Phase 5
             communicationObject.setItem("V204", false);
-
-            lock (lockObject)
-            {
-                stage = Stage.black_liquor_fill;
-            }
-
         }
         private void BlackLiquorFill()
         {
+            // Phase 1
+            communicationObject.setItem("V204", true);
+            communicationObject.setItem("V301", true);
+            communicationObject.setItem("V303", true);
+            communicationObject.setItem("P200", 100);
+            communicationObject.setItem("V404", true);
 
+            while (indicators.LI400 >= 35) { }  // TODO Failsafe?
+
+            // Phase 2
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V301", false);
+            communicationObject.setItem("V401", false);
+            communicationObject.setItem("V303", false);
+            communicationObject.setItem("P200", 0);
+            communicationObject.setItem("V404", false);
         }
         private void WhiteLiquorFill()
         {
+            // Phase 1
+            communicationObject.setItem("V301", true);
+            communicationObject.setItem("V401", true);
 
+            communicationObject.setItem("V102", 100);
+            communicationObject.setItem("V304", true);
+            communicationObject.setItem("P100", 100);
+
+            while (indicators.LI400 >= 80) { }  // TODO Failsafe?
+
+            // Phase 2
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V301", false);
+            communicationObject.setItem("V401", false);
+
+            communicationObject.setItem("V102", 0);
+            communicationObject.setItem("V304", false);
+            communicationObject.setItem("P100", 0);
         }
         private void Cooking()
         {
+            // Phase 1
+            communicationObject.setItem("V104", 100);
+            communicationObject.setItem("V301", true);
 
+            communicationObject.setItem("V102", 100);
+            communicationObject.setItem("V304", true);
+            communicationObject.setItem("P100", 100);
+            communicationObject.setItem("E100", true);
+
+            double T = settings.cookingTemperature;  // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana
+            double p = settings.cookingTemperature;
+            double Tc = settings.cookingTime;
+            while (indicators.TI300 > T) { } // TODO Failsafe?
+
+            // Phase 2
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V401", false);
+
+            communicationObject.setItem("V102", 100);
+            communicationObject.setItem("V304", true);
+            communicationObject.setItem("P100", 100);
+
+            // Phase 3 lämpötila säätö == T ja paineen säätö == p ajan Tc
+            // TODO
         }
         private void Discharge()
         {
