@@ -53,17 +53,19 @@ namespace Minipanosprosessi
 
     }
 
-    // TODO siirrä public struct Settings tänne ja alusta rakentajassa
     class ControlSystem : IProcessObserver
     {
         Communication communicationObject;
+        MainWindow mainWindowObject;
         bool isStarted;
         Stage stage;
         Settings settings;
         Indicators indicators;
-        public ControlSystem(Communication communication)
+        private object lockObject = new object();
+        public ControlSystem(Communication communication, MainWindow mainWindow)
         {
             communicationObject = communication;
+            mainWindowObject = mainWindow;
             isStarted = false;
             stage = Stage.impregnation;
             indicators = new Indicators();
@@ -71,19 +73,29 @@ namespace Minipanosprosessi
         }
         public void Start()
         {
-            isStarted = true;
+            lock (lockObject)
+            {
+                isStarted = true;
+            }
             var task = new System.Threading.Tasks.Task(() => RunLoop());
             task.Start();
         }
 
         public void Stop()
         {
-            isStarted = false;
+            lock (lockObject)
+            {
+                isStarted = false;
+            }
+            // TODO
         }
 
         public void UpdateSettings(Settings settingsToSet)
         {
-            settings = settingsToSet;
+            lock (lockObject)
+            {
+                settings = settingsToSet;
+            }
         }
 
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
@@ -97,46 +109,49 @@ namespace Minipanosprosessi
         /// <param name="args"></param>
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
-            foreach (var item in args.ChangedItems)
+            lock (lockObject)
             {
-                switch (item.Key)
+                foreach (var item in args.ChangedItems)
                 {
-                    case "TI100":
-                        indicators.TI100 = (double)item.Value.GetValue();
-                        break;
-                    case "TI300":
-                        indicators.TI300 = (double)item.Value.GetValue();
-                        break;
-                    case "FI100":
-                        indicators.FI100 = (double)item.Value.GetValue();
-                        break;
-                    case "LI100":
-                        indicators.LI100 = (int)item.Value.GetValue();
-                        break;
-                    case "LI200":
-                        indicators.LI200 = (int)item.Value.GetValue();
-                        break;
-                    case "LI400":
-                        indicators.LI400 = (int)item.Value.GetValue();
-                        break;
-                    case "PI300":
-                        indicators.PI300 = (int)item.Value.GetValue();
-                        break;
-                    case "LS+300":
-                        indicators.LSp300 = (bool)item.Value.GetValue();
-                        break;
-                    case "LS-300":
-                        indicators.LSm300 = (bool)item.Value.GetValue();
-                        break;
-                    case "LS-200":
-                        indicators.LSm200 = (bool)item.Value.GetValue();
-                        break;
-                    case "LA100":
-                        indicators.LA100 = (bool)item.Value.GetValue();
-                        break;
-                    default:
-                        // TODO throw exception ? 
-                        break;
+                    switch (item.Key)
+                    {
+                        case "TI100":
+                            indicators.TI100 = (double)item.Value.GetValue();
+                            break;
+                        case "TI300":
+                            indicators.TI300 = (double)item.Value.GetValue();
+                            break;
+                        case "FI100":
+                            indicators.FI100 = (double)item.Value.GetValue();
+                            break;
+                        case "LI100":
+                            indicators.LI100 = (int)item.Value.GetValue();
+                            break;
+                        case "LI200":
+                            indicators.LI200 = (int)item.Value.GetValue();
+                            break;
+                        case "LI400":
+                            indicators.LI400 = (int)item.Value.GetValue();
+                            break;
+                        case "PI300":
+                            indicators.PI300 = (int)item.Value.GetValue();
+                            break;
+                        case "LS+300":
+                            indicators.LSp300 = (bool)item.Value.GetValue();
+                            break;
+                        case "LS-300":
+                            indicators.LSm300 = (bool)item.Value.GetValue();
+                            break;
+                        case "LS-200":
+                            indicators.LSm200 = (bool)item.Value.GetValue();
+                            break;
+                        case "LA100":
+                            indicators.LA100 = (bool)item.Value.GetValue();
+                            break;
+                        default:
+                            // TODO throw exception ? 
+                            break;
+                    }
                 }
             }
         }
@@ -147,6 +162,7 @@ namespace Minipanosprosessi
                 switch (stage)
                 {
                     case Stage.impregnation:
+                        mainWindowObject.setSequenceStage("Impregnation");
                         Impregnation();
                         break;
                     case Stage.black_liquor_fill:
@@ -164,7 +180,10 @@ namespace Minipanosprosessi
                     default:
                         break;
                 }
-                stage++;
+                lock (lockObject)
+                {
+                    stage++;
+                }
             }
         }
 
@@ -184,8 +203,12 @@ namespace Minipanosprosessi
             communicationObject.setItem("V104", 0);
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V401", false);
-            int Ti = (int)settings.impregnationTime * 1000;
-            Thread.Sleep(Ti);
+
+            lock (lockObject)
+            {
+                int Ti = (int)settings.impregnationTime * 1000;
+                Thread.Sleep(Ti);  // TODO lukko
+            }
 
             // Phase 3
             communicationObject.setItem("V201", false);
@@ -203,7 +226,10 @@ namespace Minipanosprosessi
             // Phase 5
             communicationObject.setItem("V204", false);
 
-            stage = Stage.black_liquor_fill;
+            lock (lockObject)
+            {
+                stage = Stage.black_liquor_fill;
+            }
 
         }
         private void BlackLiquorFill()

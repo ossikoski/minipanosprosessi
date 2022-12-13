@@ -64,10 +64,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="DeveloperWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -78,9 +74,6 @@
     </Compile>
     <Compile Include="Communication.cs" />
     <Compile Include="ControlSystem.cs" />
-    <Compile Include="DeveloperWindow.xaml.cs">
-      <DependentUpon>DeveloperWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="IProcessObserver.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

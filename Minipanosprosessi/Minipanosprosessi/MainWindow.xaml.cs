@@ -25,13 +25,14 @@ namespace Minipanosprosessi
     {
         private Communication communication;
         private ControlSystem controlSystem;
+        private object lockObject = new object();
 
         public MainWindow()
         {
             InitializeComponent();
 
             communication = new Communication();
-            controlSystem = new ControlSystem(communication);
+            controlSystem = new ControlSystem(communication, this);
 
             // Add observers
             communication.AddObserver(controlSystem);
@@ -115,7 +116,7 @@ namespace Minipanosprosessi
             // TODO: vaihda Invoke -> BeginInvoke
             textBlock.Dispatcher.Invoke(() =>
             {
-                textBlock.Text = text;
+                textBlock.Text = text;  // private -> ei lukkoa
             });
         }
         
@@ -128,7 +129,10 @@ namespace Minipanosprosessi
             TextBlock textBlock = sequenceTextBlock;
             textBlock.Dispatcher.Invoke(() =>
             {
-                textBlock.Text = text;
+                lock (lockObject)
+                {
+                    textBlock.Text = text;
+                }
             });
         }
 
@@ -238,81 +242,84 @@ namespace Minipanosprosessi
         /// <param name="args"></param>
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
-            foreach (var item in args.ChangedItems)
+            lock (lockObject)
             {
-                switch (item.Key)
+                foreach (var item in args.ChangedItems)
                 {
-                    case "TI100":
-                        setTextBlock(TI100textBlock, item.Value, "°C");
-                        break;
-                    case "TI300":
-                        setTextBlock(TI300textBlock, item.Value, "°C");
-                        break;
-                    case "FI100":
-                        setTextBlock(FI100textBlock, item.Value, " l/min");
-                        break;
-                    case "LI100":
-                        setTextBlock(LI100textBlock, item.Value, " mm");
-                        setLevelIndicator(T100level, item.Value, 300);
-                        break;
-                    case "LI200":
-                        setTextBlock(LI200textBlock, item.Value, " mm");
-                        setLevelIndicator(T200level, item.Value, 300);
-                        break;
-                    case "LI400":
-                        setTextBlock(LI400textBlock, item.Value, " mm");
-                        setLevelIndicator(T400level, item.Value, 300);
-                        break;
-                    case "PI300":
-                        setTextBlock(PI300textBlock, item.Value, " hPa");
-                        break;
-                    case "V102":
-                        //setTextBlock(V102textBlock, item.Value, "%");
-                        changeItemImage(V102image, "controlValve", item.Value);
-                        break;
-                    case "V104":
-                        setTextBlock(V104textBlock, item.Value, "%");
-                        changeItemImage(V104image, "controlValve", item.Value);
-                        break;
-                    case "V103":
-                        changeItemImage(V103image, "valve", item.Value);
-                        break;
-                    case "V201":
-                        changeItemImage(V201image, "valve", item.Value);
-                        break;
-                    case "V204":
-                        changeItemImage(V204image, "valve", item.Value);
-                        break;
-                    case "V301":
-                        changeItemImage(V301image, "valve", item.Value);
-                        break;
-                    case "V302":
-                        changeItemImage(V302image, "valve", item.Value);
-                        break;
-                    case "V303":
-                        changeItemImage(V303image, "valve", item.Value);
-                        break;
-                    case "V304":
-                        changeItemImage(V304image, "valve", item.Value);
-                        break;
-                    case "V401":
-                        changeItemImage(V401image, "valve", item.Value);
-                        break;
-                    case "V404":
-                        changeItemImage(V404image, "valve", item.Value);
-                        break;
-                    case "P100":
-                        changeItemImage(P100image, "pump", item.Value);
-                        break;
-                    case "P200":
-                        changeItemImage(P200image, "pump", item.Value);
-                        break;
-                    case "E100":
-                        changeItemImage(E100image, "heater", item.Value);
-                        break;
-                    default:
-                        // code block
-                        break;
+                    switch (item.Key)
+                    {
+                        case "TI100":
+                            setTextBlock(TI100textBlock, item.Value, "°C");
+                            break;
+                        case "TI300":
+                            setTextBlock(TI300textBlock, item.Value, "°C");
+                            break;
+                        case "FI100":
+                            setTextBlock(FI100textBlock, item.Value, " l/min");
+                            break;
+                        case "LI100":
+                            setTextBlock(LI100textBlock, item.Value, " mm");
+                            setLevelIndicator(T100level, item.Value, 300);
+                            break;
+                        case "LI200":
+                            setTextBlock(LI200textBlock, item.Value, " mm");
+                            setLevelIndicator(T200level, item.Value, 300);
+                            break;
+                        case "LI400":
+                            setTextBlock(LI400textBlock, item.Value, " mm");
+                            setLevelIndicator(T400level, item.Value, 300);
+                            break;
+                        case "PI300":
+                            setTextBlock(PI300textBlock, item.Value, " hPa");
+                            break;
+                        case "V102":
+                            //setTextBlock(V102textBlock, item.Value, "%");
+                            changeItemImage(V102image, "controlValve", item.Value);
+                            break;
+                        case "V104":
+                            setTextBlock(V104textBlock, item.Value, "%");
+                            changeItemImage(V104image, "controlValve", item.Value);
+                            break;
+                        case "V103":
+                            changeItemImage(V103image, "valve", item.Value);
+                            break;
+                        case "V201":
+                            changeItemImage(V201image, "valve", item.Value);
+                            break;
+                        case "V204":
+                            changeItemImage(V204image, "valve", item.Value);
+                            break;
+                        case "V301":
+                            changeItemImage(V301image, "valve", item.Value);
+                            break;
+                        case "V302":
+                            changeItemImage(V302image, "valve", item.Value);
+                            break;
+                        case "V303":
+                            changeItemImage(V303image, "valve", item.Value);
+                            break;
+                        case "V304":
+                            changeItemImage(V304image, "valve", item.Value);
+                            break;
+                        case "V401":
+                            changeItemImage(V401image, "valve", item.Value);
+                            break;
+                        case "V404":
+                            changeItemImage(V404image, "valve", item.Value);
+                            break;
+                        case "P100":
+                            changeItemImage(P100image, "pump", item.Value);
+                            break;
+                        case "P200":
+                            changeItemImage(P200image, "pump", item.Value);
+                            break;
+                        case "E100":
+                            changeItemImage(E100image, "heater", item.Value);
+                            break;
+                        default:
+                            // code block
+                            break;
+                    }
                 }
             }
         }
