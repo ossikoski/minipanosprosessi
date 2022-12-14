@@ -112,6 +112,13 @@ namespace Minipanosprosessi
         {
             string text;
             text = value.GetValue().ToString();
+            // Katkaistaan desimaaliluku kahteen desimaaliin kaikissa mis on ",".
+            // Ei pyöristystä käyttöliittymään. Taustalla käytetään tarkkoja arvoja.
+            if (text.Contains(","))
+            {
+                string[] strings = text.Split(',');
+                text = strings[0] + "," + strings[1].Substring(0, 2);
+            }
             text += unit;
 
             // TODO: vaihda Invoke -> BeginInvoke
@@ -286,6 +293,9 @@ namespace Minipanosprosessi
                             break;
                         case "V201":
                             changeItemImage(V201image, "valve", item.Value);
+                            System.Console.WriteLine("!!!!!V201");
+                            Type type2 = item.GetType();
+                            System.Console.WriteLine(type2.Name);
                             break;
                         case "V204":
                             changeItemImage(V204image, "valve", item.Value);
