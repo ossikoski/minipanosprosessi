@@ -87,6 +87,7 @@ namespace Minipanosprosessi
             {
                 isStarted = false;
             }
+            Discharge();
             // TODO
         }
 
@@ -159,6 +160,7 @@ namespace Minipanosprosessi
         private void RunLoop()
         {
             while (isStarted){
+                System.Console.WriteLine("Loop started");
                 switch (stage)
                 {
                     case Stage.impregnation:
@@ -201,16 +203,20 @@ namespace Minipanosprosessi
             communicationObject.setItem("V204", true);
             communicationObject.setItem("V301", true);
 
-            while (!indicators.LSp300){}  // TODO: Failsafe?, miten toimii säikeiden kanssa?
+            System.Console.WriteLine("Waiting for LS+300");
+            while (!indicators.LSp300){ }  // TODO: Failsafe?, miten toimii säikeiden kanssa?
+            System.Console.WriteLine("LS+300 activated");
 
             // Phase 2:
             communicationObject.setItem("V104", 0);
             communicationObject.setItem("V204", false);
             communicationObject.setItem("V401", false);
 
+            System.Console.WriteLine("Waiting impregnation time");
             // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana:
             int Ti = (int)settings.impregnationTime * 1000;
             Thread.Sleep(Ti);
+            System.Console.WriteLine("Impregnation time passed");
 
             // Phase 3
             communicationObject.setItem("V201", false);
@@ -221,12 +227,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V301", false);
             communicationObject.setItem("V401", false);
 
-            // Phase 4
-            communicationObject.setItem("V204", true);
-            Thread.Sleep(1000);
-            
-            // Phase 5
-            communicationObject.setItem("V204", false);
+            // Phase 4-5
+            DepressurizeDigester();
+
         }
         private void BlackLiquorFill()
         {
@@ -237,7 +240,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("P200", 100);
             communicationObject.setItem("V404", true);
 
+            System.Console.WriteLine("Waiting for LI400 >= 35");
             while (indicators.LI400 >= 35) { }  // TODO Failsafe?
+            System.Console.WriteLine("LI400 >= 35 done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -258,7 +263,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V304", true);
             communicationObject.setItem("P100", 100);
 
+            System.Console.WriteLine("Waiting for LI400 >= 80");
             while (indicators.LI400 >= 80) { }  // TODO Failsafe?
+            System.Console.WriteLine("LI400 >= 80 done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -281,10 +288,12 @@ namespace Minipanosprosessi
             communicationObject.setItem("P100", 100);
             communicationObject.setItem("E100", true);
 
-            double T = settings.cookingTemperature;  // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana
-            double p = settings.cookingTemperature;
+            double T = settings.cookingTemperature;
+            double p = settings.cookingPressure;
             double Tc = settings.cookingTime;
+            System.Console.WriteLine("Waiting for TI300 > cookingTemperature");
             while (indicators.TI300 > T) { } // TODO Failsafe?
+            System.Console.WriteLine("TI300 > cookingTemperature done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -295,12 +304,64 @@ namespace Minipanosprosessi
             communicationObject.setItem("V304", true);
             communicationObject.setItem("P100", 100);
 
-            // Phase 3 lämpötila säätö == T ja paineen säätö == p ajan Tc
+            System.Console.WriteLine("Control loop for TI300 = cookingTemperature and PI300 = cookingPressure for cookingTime");
+            // Phase 3 lämpötila säätö TI300 == T ja paineen säätö PI300 == p ajan Tc
             // TODO
+            System.Console.WriteLine("Control loop done");
+
+            // Phase 4
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("E100", false);
+
+            // Phase 5
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V301", false);
+            communicationObject.setItem("V401", false);
+
+            communicationObject.setItem("V102", 0);
+            communicationObject.setItem("V304", false);
+            communicationObject.setItem("P100", 0);
+
+            // Phase 6-7
+            DepressurizeDigester();
+
         }
         private void Discharge()
         {
+            // Phase 1
+            communicationObject.setItem("V103", true);
+            communicationObject.setItem("V303", true);
+            communicationObject.setItem("P200", 100);
 
+            communicationObject.setItem("V204", true);
+            communicationObject.setItem("V302", true);
+
+            // "LS-300 is deactivated"
+            System.Console.WriteLine("Waiting for LS-300 to deactivate");
+            while (indicators.LSm300) { } // TODO Failsafe?
+            System.Console.WriteLine("LS-300 deactivated");
+
+            // Phase 2
+            communicationObject.setItem("V103", false);
+            communicationObject.setItem("V303", false);
+            communicationObject.setItem("P200", 0);
+
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V302", false);
+        }
+
+        /// <summary>
+        /// Helper function for the functionality
+        /// EM3_OP8 Depressurize digester/T300
+        /// </summary>
+        private void DepressurizeDigester()
+        {
+            System.Console.WriteLine("Depressurizing digester");
+            communicationObject.setItem("V204", true);
+            Thread.Sleep(1000);  // Td = 1s
+            communicationObject.setItem("V204", false);
+            System.Console.WriteLine("Digester depressurized");
         }
     }
 }
