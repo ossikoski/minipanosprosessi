@@ -72,7 +72,7 @@ namespace Minipanosprosessi
         /// <param name="e"></param>
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
-            startButton.IsEnabled = true;
+            settingsButton.IsEnabled = true;
             communication.Connect();
         }
 
@@ -95,6 +95,7 @@ namespace Minipanosprosessi
                 settings.impregnationTime = double.Parse(impregnationTimeTextBox.Text, CultureInfo.InvariantCulture);
 
                 controlSystem.UpdateSettings(settings);
+                startButton.IsEnabled = true;
             }
             catch(Exception ex)
             {
