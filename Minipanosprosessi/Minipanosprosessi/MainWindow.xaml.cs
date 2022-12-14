@@ -293,9 +293,6 @@ namespace Minipanosprosessi
                             break;
                         case "V201":
                             changeItemImage(V201image, "valve", item.Value);
-                            System.Console.WriteLine("!!!!!V201");
-                            Type type2 = item.GetType();
-                            System.Console.WriteLine(type2.Name);
                             break;
                         case "V204":
                             changeItemImage(V204image, "valve", item.Value);

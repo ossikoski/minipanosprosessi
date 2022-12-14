@@ -186,6 +186,11 @@ namespace Minipanosprosessi
                     default:
                         break;
                 }
+                if(stage == Stage.discharge)
+                {
+                    stage = Stage.impregnation;
+                    break;
+                }
                 lock (lockObject)
                 {
                     stage++;
@@ -240,9 +245,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("P200", 100);
             communicationObject.setItem("V404", true);
 
-            System.Console.WriteLine("Waiting for LI400 >= 35");
+            System.Console.WriteLine("Waiting for LI400 < 35");
             while (indicators.LI400 >= 35) { }  // TODO Failsafe?
-            System.Console.WriteLine("LI400 >= 35 done");
+            System.Console.WriteLine("LI400 < 35 done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -263,9 +268,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V304", true);
             communicationObject.setItem("P100", 100);
 
-            System.Console.WriteLine("Waiting for LI400 >= 80");
+            System.Console.WriteLine("Waiting for LI400 < 80");
             while (indicators.LI400 >= 80) { }  // TODO Failsafe?
-            System.Console.WriteLine("LI400 >= 80 done");
+            System.Console.WriteLine("LI400 < 80 done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -291,9 +296,9 @@ namespace Minipanosprosessi
             double T = settings.cookingTemperature;
             double p = settings.cookingPressure;
             double Tc = settings.cookingTime;
-            System.Console.WriteLine("Waiting for TI300 > cookingTemperature");
-            while (indicators.TI300 > T) { } // TODO Failsafe?
-            System.Console.WriteLine("TI300 > cookingTemperature done");
+            System.Console.WriteLine("Waiting for TI300 == cookingTemperature");
+            while (indicators.TI300 < T) { } // TODO Failsafe?
+            System.Console.WriteLine("TI300 == cookingTemperature done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
