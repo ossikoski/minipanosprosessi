@@ -50,44 +50,44 @@
             <Button x:Name="connectButton" Grid.Column="0" Grid.Row="1" 
                     Content="YHDISTÄ" Margin="0,10,0,30" 
                     Click="connectButton_Click" Height="40" Width="150"/>
-
-            <Button x:Name="startButton" Content="KÄYNNISTÄ"
-                    Grid.Column="0" Grid.Row="2" Background="Lime" 
-                    Margin="5,5,5,10" Click="startButton_Click" Height="40" 
-                    Width="150" IsEnabled="False"/>
-
-            <Button x:Name="stopButton" Content="KESKEYTÄ"
-                    Grid.Column="0" Grid.Row="3" Background="Red" 
-                    Margin="5,5,5,40" Click="stopButton_Click" Width="150" 
-                    Height="40" IsEnabled="False"/>
-
-            <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal" 
+            
+            <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" 
+                        Margin="0,0,0,10">
+                <TextBlock Text="Kyllästysaika (s):" Width="210" Margin="0,0,20,0"/>
+                <TextBox x:Name="impregnationTimeTextBox" Text="100" Width="100" />
+            </StackPanel>
+            
+            <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Keittoaika (s):" Margin="0,0,20,0" Width="210"/>
                 <TextBox x:Name="cookingTimeTextBox" Text="100" Width="100" />
             </StackPanel>
 
-            <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal" 
+            <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Keittopaine (hPa):" Width="210" Margin="0,0,20,0"/>
                 <TextBox x:Name="cookingPressureTextBox" Text="100" Width="100" />
             </StackPanel>
 
-            <StackPanel Grid.Column="0" Grid.Row="6" Orientation="Horizontal" 
-                        Margin="0,0,0,10">
+            <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal" 
+                        Margin="0,0,0,20">
                 <TextBlock Text="Keittolämpötila (°C):" Margin="0,0,20,0" Width="210"/>
                 <TextBox x:Name="cookingTemperatureTextBox" Text="50.0" Width="100" />
             </StackPanel>
 
-            <StackPanel Grid.Column="0" Grid.Row="7" Orientation="Horizontal" 
-                        Margin="0,0,0,20">
-                <TextBlock Text="Kyllästysaika (s):" Width="210" Margin="0,0,20,0"/>
-                <TextBox x:Name="impregnationTimeTextBox" Text="100" Width="100" />
-            </StackPanel>
-
-            <Button x:Name="settingsButton" Grid.Column="0" Grid.Row="8"
+            <Button x:Name="settingsButton" Grid.Column="0" Grid.Row="6"
                     Content="TALLENNA ASETUKSET" Click="settingsButton_Click" 
                     Margin="0,0,0,100" Height="40" Width="220" IsEnabled="False"/>
+
+            <Button x:Name="startButton" Content="KÄYNNISTÄ"
+                    Grid.Column="0" Grid.Row="7" Background="Lime" 
+                    Margin="5,5,5,10" Click="startButton_Click" Height="40" 
+                    Width="150" IsEnabled="False"/>
+
+            <Button x:Name="stopButton" Content="KESKEYTÄ"
+                    Grid.Column="0" Grid.Row="8" Background="Red" 
+                    Margin="5,5,5,40" Click="stopButton_Click" Width="150" 
+                    Height="40" IsEnabled="False"/>
 
             <StackPanel Grid.Column="0" Grid.Row="9" Orientation="Vertical">
                 <TextBlock Text="SEKVENSSIN VAIHE:" Margin="0,0,0,5"/>
