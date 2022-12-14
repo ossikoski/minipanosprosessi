@@ -72,6 +72,7 @@ namespace Minipanosprosessi
         /// <param name="e"></param>
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
+            startButton.IsEnabled = true;
             communication.Connect();
         }
 
