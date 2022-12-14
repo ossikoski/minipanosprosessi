@@ -31,7 +31,7 @@ namespace Minipanosprosessi
         {
             InitializeComponent();
 
-            communication = new Communication();
+            communication = new Communication(this);
             controlSystem = new ControlSystem(communication, this);
 
             // Add observers
@@ -72,7 +72,6 @@ namespace Minipanosprosessi
         /// <param name="e"></param>
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
-            settingsButton.IsEnabled = true;
             communication.Connect();
         }
 
@@ -99,7 +98,7 @@ namespace Minipanosprosessi
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Asetusten arvot ovat virheelliset.\n\nInfo:\n" + ex.Message, "Virhe");
+                showMessage("Asetusten arvot ovat virheelliset.\n\nInfo:\n" + ex.Message, "Virhe");
             }
         }
 
@@ -143,6 +142,18 @@ namespace Minipanosprosessi
                     textBlock.Text = text;
                 }
             });
+        }
+
+        /// <summary>
+        /// Pops up a message dialog to show a message
+        /// </summary>
+        /// <param name="text"></param>
+        public void showMessage(string text, string header)
+        {
+            lock (lockObject)
+            {
+                MessageBox.Show(text, header);
+            }
         }
 
         /// <summary>
@@ -214,7 +225,9 @@ namespace Minipanosprosessi
 
         
         /// <summary>
-        /// 
+        /// ConnectionStatus is updated in UI with connectionLight.
+        /// Also, if connection is green, settings can be saved and then sequence started, otherwise not.
+        /// If connection is green, connect button is disabled
         /// </summary>
         /// <param name="args"></param>
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
@@ -222,6 +235,15 @@ namespace Minipanosprosessi
             if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
             {
                 // TODO: vaihda Invoke -> BeginInvoke
+                settingsButton.Dispatcher.Invoke(() =>
+                {
+                    settingsButton.IsEnabled = true;
+                });
+                connectButton.Dispatcher.Invoke(() =>
+                {
+                    connectButton.IsEnabled = false;
+                });
+
                 connectionLight.Dispatcher.Invoke(() =>
                 {
                     connectionLight.Fill = Brushes.Lime;
@@ -230,6 +252,19 @@ namespace Minipanosprosessi
             else if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connecting))
             {
                 // TODO: vaihda Invoke -> BeginInvoke
+                settingsButton.Dispatcher.Invoke(() =>
+                {
+                    settingsButton.IsEnabled = false;
+                });
+                startButton.Dispatcher.Invoke(() =>
+                {
+                    startButton.IsEnabled = false;
+                });
+                connectButton.Dispatcher.Invoke(() =>
+                {
+                    connectButton.IsEnabled = true;
+                });
+
                 connectionLight.Dispatcher.Invoke(() =>
                 {
                     connectionLight.Fill = Brushes.Yellow;
@@ -238,6 +273,19 @@ namespace Minipanosprosessi
             else
             {
                 // TODO: vaihda Invoke -> BeginInvoke
+                settingsButton.Dispatcher.Invoke(() =>
+                {
+                    settingsButton.IsEnabled = false;
+                });
+                startButton.Dispatcher.Invoke(() =>
+                {
+                    startButton.IsEnabled = false;
+                });
+                connectButton.Dispatcher.Invoke(() =>
+                {
+                    connectButton.IsEnabled = true;
+                });
+
                 connectionLight.Dispatcher.Invoke(() =>
                 {
                     connectionLight.Fill = Brushes.Red;

@@ -9,23 +9,31 @@ namespace Minipanosprosessi
 {
     class Communication
     {
+        MainWindow mainWindowObject;
         private MppClient client;
-        bool isConnected = false;
+        bool wasConnected = false;
         private HashSet<IProcessObserver> observers = null;
         private object lockObject;
 
         /// <summary>
         /// 
         /// </summary>
-        public Communication()
+        public Communication(MainWindow mainWindow)
         {
+            mainWindowObject = mainWindow;
             lockObject = new object();
             observers = new HashSet<IProcessObserver>();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public void Connect()
         {
-            if(isConnected){return;}  // TODO ? Jos tarvii uudelleenyhdistää
+            if (client != null)
+            {
+                client.Dispose();
+            }
 
             ConnectionParamsHolder par = new ConnectionParamsHolder("opc.tcp://localhost:8087");
             client = new MppClient(par);
@@ -33,7 +41,15 @@ namespace Minipanosprosessi
             client.ConnectionStatus += new MppClient.ConnectionStatusEventHandler(NotifyObserversConnectionStatus);
             client.ProcessItemsChanged += new MppClient.ProcessItemsChangedEventHandler(NotifyObserversProcessItems);
 
-            client.Init();
+            try
+            {
+                client.Init();
+            }
+            catch (InvalidOperationException)
+            {
+                mainWindowObject.showMessage("Yhteyttä ei voitu muodostaa.\n" + "Varmista, että simulaattori on päällä.", "Virhe");
+                return;
+            }
 
             // Temperature
             client.AddToSubscription("TI100");
@@ -70,7 +86,7 @@ namespace Minipanosprosessi
             client.AddToSubscription("LS-200");
             client.AddToSubscription("LA+100");
 
-            isConnected = true;
+            wasConnected = true;
         }
 
         public void AddObserver(IProcessObserver observer)
@@ -92,6 +108,7 @@ namespace Minipanosprosessi
 
         private void NotifyObserversConnectionStatus(object source, ConnectionStatusEventArgs args)
         {
+            System.Console.WriteLine($"Connection status changed, status is now {args.StatusInfo.FullStatusString}");
             ConnectionStatusEventArgs connectionStatusCopy = null;
             IProcessObserver[] observersCopy = null;
 
@@ -107,6 +124,11 @@ namespace Minipanosprosessi
                 o.UpdateConnectionStatus(connectionStatusCopy);
             }
 
+            if (wasConnected && !args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
+            {
+                wasConnected = false;
+                Connect();
+            }
         }
 
         private void NotifyObserversProcessItems(object source, ProcessItemChangedEventArgs args)
