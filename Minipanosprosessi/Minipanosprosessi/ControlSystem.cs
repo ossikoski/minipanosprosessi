@@ -268,9 +268,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V304", true);
             communicationObject.setItem("P100", 100);
 
-            System.Console.WriteLine("Waiting for LI400 < 80");
-            while (indicators.LI400 >= 80) { }  // TODO Failsafe?
-            System.Console.WriteLine("LI400 < 80 done");
+            System.Console.WriteLine("Waiting for LI400 > 80");
+            while (indicators.LI400 <= 80) { }  // TODO Failsafe?
+            System.Console.WriteLine("LI400 > 80 done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -311,7 +311,26 @@ namespace Minipanosprosessi
 
             System.Console.WriteLine("Control loop for TI300 = cookingTemperature and PI300 = cookingPressure for cookingTime");
             // Phase 3 lämpötila säätö TI300 == T ja paineen säätö PI300 == p ajan Tc
-            // TODO
+            var startTime = DateTime.Now;
+            double diffSeconds = 0;
+            var v102 = 100;
+            int v104 = 0;
+
+            double dT = 0.3;
+            int dp = 10;  // hPa
+            communicationObject.setItem("V104", 100);  // TODO poista
+            while (diffSeconds < Tc)
+            {
+                if (indicators.TI300 > T)
+                {
+                    communicationObject.setItem("E100", false);
+                }
+                if (indicators.TI300 < T)
+                {
+                    communicationObject.setItem("E100", true);
+                }
+                diffSeconds = (DateTime.Now - startTime).TotalSeconds;
+            }
             System.Console.WriteLine("Control loop done");
 
             // Phase 4
