@@ -16,8 +16,9 @@ namespace Minipanosprosessi
         private object lockObject;
 
         /// <summary>
-        /// 
+        /// Communication class to communicate between the simulator and the system.
         /// </summary>
+        /// <param name="mainWindow">MainWindow object</param>
         public Communication(MainWindow mainWindow)
         {
             mainWindowObject = mainWindow;
@@ -26,7 +27,7 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Connect to the simulator
         /// </summary>
         public void Connect()
         {
@@ -89,15 +90,24 @@ namespace Minipanosprosessi
             wasConnected = true;
         }
 
+        /// <summary>
+        /// Add observer who will receive info from the simulator
+        /// Save to observers list attribute 
+        /// </summary>
+        /// <param name="observer">The observer to save</param>
         public void AddObserver(IProcessObserver observer)
         {
             lock (lockObject)
             {
                 observers.Add(observer);
             }
-
         }
 
+
+        /// <summary>
+        /// Add observer who will no longer receive info from the simulator
+        /// </summary>
+        /// <param name="observer">The observer to remove</param>
         public void RemoveObserver(IProcessObserver observer)
         {
             lock (lockObject)
@@ -106,6 +116,11 @@ namespace Minipanosprosessi
             }
         }
 
+        /// <summary>
+        /// Notify observers on the current connection status
+        /// </summary>
+        /// <param name="source">Source of the event</param>
+        /// <param name="args">Information on the connection status</param>
         private void NotifyObserversConnectionStatus(object source, ConnectionStatusEventArgs args)
         {
             System.Console.WriteLine($"Connection status changed, status is now {args.StatusInfo.FullStatusString}");
@@ -131,6 +146,11 @@ namespace Minipanosprosessi
             }
         }
 
+        /// <summary>
+        /// Notify observers on the changed process items.
+        /// </summary>
+        /// <param name="source">Source of the event</param>
+        /// <param name="args">Information on the changed process items</param>
         private void NotifyObserversProcessItems(object source, ProcessItemChangedEventArgs args)
         {
             ProcessItemChangedEventArgs processItemsCopy = null;

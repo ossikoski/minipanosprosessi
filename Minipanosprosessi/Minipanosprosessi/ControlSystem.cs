@@ -10,13 +10,13 @@ using Tuni.MppOpcUaClientLib;
 namespace Minipanosprosessi
 {
     /// <summary>
-    /// Minipanosprosessin ohjaussysteemin logiikka
+    /// Pulp process control logic.
     /// </summary>
     /// 
     enum Stage
     {
         /// <summary>
-        /// Mikä prosessin vaihe on meneillään
+        /// To keep track of the current stage of the process.
         /// </summary>
         impregnation,
         black_liquor_fill,
@@ -27,9 +27,9 @@ namespace Minipanosprosessi
     public struct Indicators
     {
         /// <summary>
-        /// 
+        /// Indicator values
         /// </summary>
-        // alkuarvot (20, 20, 0, 216, 90, 90, 0, false, true, true, true)
+        // starting values are: (20, 20, 0, 216, 90, 90, 0, false, true, true, true)
         public double TI100;
         public double TI300;
         public double FI100;
@@ -40,12 +40,12 @@ namespace Minipanosprosessi
         public bool LSp300;  // LSp300 = LS+300
         public bool LSm300;  // LSm300 = LS-300
         public bool LSm200;
-        public bool LA100;  // false -> alarm is active and level is under 100)
+        public bool LA100;  // false -> alarm is active and level is under 100
     }
     public struct Settings
     {
         /// <summary>
-        /// Asetukset 
+        /// Settings for the pulp control
         /// </summary>
         public double cookingTime;
         public double cookingPressure;
@@ -66,6 +66,12 @@ namespace Minipanosprosessi
         private static System.Timers.Timer controllerTimer;
         PIController pressureController;
         System.Threading.Tasks.Task task;  // Another thread
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="communication">The Communication object</param>
+        /// <param name="mainWindow">The MainWindow object</param>
         public ControlSystem(Communication communication, MainWindow mainWindow)
         {
             communicationObject = communication;
@@ -84,6 +90,11 @@ namespace Minipanosprosessi
             controllerTimer.Elapsed += PressureControllerEvent;
             controllerTimer.AutoReset = true;
         }
+
+        /// <summary>
+        /// Start the pulp process control.
+        /// Will create another thread for the RunLoop method.
+        /// </summary>
         public void Start()
         {
             lock (lockObject)
@@ -94,6 +105,9 @@ namespace Minipanosprosessi
             task.Start();
         }
 
+        /// <summary>
+        /// Stop the pulp process control
+        /// </summary>
         public void Stop()
         {
             lock (lockObject)
@@ -116,9 +130,12 @@ namespace Minipanosprosessi
             communicationObject.setItem("E100", false);
 
             mainWindowObject.setSequenceStage("Keskeytetty");
-
         }
 
+        /// <summary>
+        /// Update settings for the ControlSystem.
+        /// </summary>
+        /// <param name="settingsToSet">Settings struct that includes the setting values.</param>
         public void UpdateSettings(Settings settingsToSet)
         {
             lock (lockObject)
@@ -135,7 +152,7 @@ namespace Minipanosprosessi
         /// <summary>
         /// Update process items, in this case, those are indicator values
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Which process items have changed and their values</param>
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
             lock (lockObject)
@@ -185,6 +202,11 @@ namespace Minipanosprosessi
             }
         }
 
+        /// <summary>
+        /// Event to control the pressure by adjusting the position of V104
+        /// </summary>
+        /// <param name="source">The event sender object</param>
+        /// <param name="e">ElapsedEventArgs object</param>
         private void PressureControllerEvent(Object source, ElapsedEventArgs e)
         {
             double control = pressureController.updateOutput(indicators.PI300);
@@ -202,6 +224,9 @@ namespace Minipanosprosessi
             communicationObject.setItem("V104", intControl);
         }
 
+        /// <summary>
+        /// Run the pulp process sequence loop and keep track of the stage
+        /// </summary>
         private void RunLoop()
         {
             while (isStarted){
@@ -243,6 +268,9 @@ namespace Minipanosprosessi
             }
         }
 
+        /// <summary>
+        /// Impregnation stage for the pulp process sequence.
+        /// </summary>
         private void Impregnation()
         {
             // Phase 1:
@@ -281,6 +309,10 @@ namespace Minipanosprosessi
             DepressurizeDigester();
 
         }
+
+        /// <summary>
+        /// Black liquor fill stage for the pulp process sequence.
+        /// </summary>
         private void BlackLiquorFill()
         {
             // Phase 1
@@ -303,6 +335,10 @@ namespace Minipanosprosessi
             communicationObject.setItem("P200", 0);
             communicationObject.setItem("V404", false);
         }
+
+        /// <summary>
+        /// White liquor fill stage for the pulp process sequence.
+        /// </summary>
         private void WhiteLiquorFill()
         {
             // Phase 1
@@ -327,6 +363,10 @@ namespace Minipanosprosessi
             communicationObject.setItem("V304", false);
             communicationObject.setItem("P100", 0);
         }
+
+        /// <summary>
+        /// Cooking stage for the pulp process sequence.
+        /// </summary>
         private void Cooking()
         {
             // Phase 1
@@ -395,8 +435,11 @@ namespace Minipanosprosessi
 
             // Phase 6-7
             DepressurizeDigester();
-
         }
+
+        /// <summary>
+        /// Discharge stage for the pulp process sequence.
+        /// </summary>
         private void Discharge()
         {
             // Phase 1

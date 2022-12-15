@@ -40,10 +40,10 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when startButton is clicked
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender object</param>
+        /// <param name="e">RoutedEventArgs object</param>
         private void startButton_Click(object sender, RoutedEventArgs e)
         {
             controlSystem.Start();
@@ -53,10 +53,10 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when stopButton is clicked
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender object</param>
+        /// <param name="e">RoutedEventArgs object</param>
         private void stopButton_Click(object sender, RoutedEventArgs e)
         {
             controlSystem.Stop();
@@ -66,20 +66,21 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when connectButton is clicked
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender object</param>
+        /// <param name="e">RoutedEventArgs object</param>
         private void connectButton_Click(object sender, RoutedEventArgs e)
         {
             communication.Connect();
         }
 
         /// <summary>
-        /// 
+        /// Event handler for when settingsButton is clicked
+        /// Settings will be saved and sent to ControlSystem
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">The event sender object</param>
+        /// <param name="e">RoutedEventArgs object</param>
         public void settingsButton_Click(object sender, RoutedEventArgs e)
         {
             Settings settings = new Settings();
@@ -102,7 +103,7 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// Set text (only) for the inidcator/valve text boxes
+        /// Set text (only) for the indicator/valve text boxes
         /// </summary>
         /// <param name="textBlock">Text block component name.</param>
         /// <param name="value">Text value to set for the text block.</param>
@@ -164,11 +165,11 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Set a level indicator progressbar based on the percentage
         /// </summary>
-        /// <param name="levelIndicator"></param>
-        /// <param name="value"></param>
-        /// <param name="maxValue"></param>
+        /// <param name="levelIndicator">ProgressBar object, the target to set the indicator for</param>
+        /// <param name="value">Current value of tha quantity</param>
+        /// <param name="maxValue">Maximum value of the quantity</param>
         private void setLevelIndicator(ProgressBar levelIndicator, MppValue value, int maxValue)
         {
             double percentage;
@@ -184,11 +185,11 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Change heater, pump or valve image based on on/off or open/closed position
         /// </summary>
-        /// <param name="image"></param>
-        /// <param name="indicatorType"></param>
-        /// <param name="value"></param>
+        /// <param name="image">Image to set</param>
+        /// <param name="indicatorType">The type of the indicator: "heater", "pump", "valve" or "controlValve".</param>
+        /// <param name="value">Value of the stage of the item</param>
         private void changeItemImage(Image image, string indicatorType, MppValue value)
         {
             bool bValue = false;
@@ -236,7 +237,7 @@ namespace Minipanosprosessi
         /// Also, if connection is green, settings can be saved and then sequence started, otherwise not.
         /// If connection is green, connect button is disabled
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Information on the connection status</param>
         public void UpdateConnectionStatus(ConnectionStatusEventArgs args)
         {
             if (args.StatusInfo.SimplifiedStatus.Equals(ConnectionStatusInfo.StatusType.Connected))
@@ -301,9 +302,9 @@ namespace Minipanosprosessi
         }
 
         /// <summary>
-        /// 
+        /// Update process item values.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="args">Information on which process items have changed and their values</param>
         public void UpdateProcessItems(ProcessItemChangedEventArgs args)
         {
             lock (lockObject)
