@@ -65,6 +65,7 @@ namespace Minipanosprosessi
         private object lockObject = new object();
         private static System.Timers.Timer controllerTimer;
         PIController pressureController;
+        System.Threading.Tasks.Task task;  // Another thread
         public ControlSystem(Communication communication, MainWindow mainWindow)
         {
             communicationObject = communication;
@@ -89,7 +90,7 @@ namespace Minipanosprosessi
             {
                 isStarted = true;
             }
-            var task = new System.Threading.Tasks.Task(() => RunLoop());
+            task = new System.Threading.Tasks.Task(() => RunLoop());
             task.Start();
         }
 
@@ -99,8 +100,23 @@ namespace Minipanosprosessi
             {
                 isStarted = false;
             }
-            Discharge();
-            // TODO
+            communicationObject.setItem("V102", 0);
+            communicationObject.setItem("V104", 0);
+            communicationObject.setItem("V103", false);
+            communicationObject.setItem("V201", false);
+            communicationObject.setItem("V204", false);
+            communicationObject.setItem("V301", false);
+            communicationObject.setItem("V302", false);
+            communicationObject.setItem("V303", false);
+            communicationObject.setItem("V304", false);
+            communicationObject.setItem("V401", false);
+            communicationObject.setItem("V404", false);
+            communicationObject.setItem("P100", 0);
+            communicationObject.setItem("P200", 0);
+            communicationObject.setItem("E100", false);
+
+            mainWindowObject.setSequenceStage("Keskeytetty");
+
         }
 
         public void UpdateSettings(Settings settingsToSet)
@@ -325,9 +341,9 @@ namespace Minipanosprosessi
             double T = settings.cookingTemperature;
             double p = settings.cookingPressure;
             double Tc = settings.cookingTime;
-            System.Console.WriteLine("Waiting for TI300 == cookingTemperature");
-            while (indicators.TI300 < T) { } // TODO Failsafe?
-            System.Console.WriteLine("TI300 == cookingTemperature done");
+            System.Console.WriteLine("Waiting for TI100 == cookingTemperature");
+            while (indicators.TI100 < T) { } // TODO Failsafe?
+            System.Console.WriteLine("TI100 == cookingTemperature done");
 
             // Phase 2
             communicationObject.setItem("V104", 0);
@@ -342,11 +358,6 @@ namespace Minipanosprosessi
             // Phase 3 lämpötila säätö TI300 == T ja paineen säätö PI300 == p ajan Tc
             var startTime = DateTime.Now;
             double diffSeconds = 0;
-            var v102 = 100;
-            int v104 = 0;
-
-            double dT = 0.3;
-            int dp = 10;  // hPa
 
             // Start pressure control
             pressureController.setSetpoint(settings.cookingPressure);
@@ -354,11 +365,11 @@ namespace Minipanosprosessi
             
             while (diffSeconds < Tc)
             {
-                if (indicators.TI300 > T)
+                if (indicators.TI100 > T + 0.3)
                 {
                     communicationObject.setItem("E100", false);
                 }
-                if (indicators.TI300 < T)
+                if (indicators.TI100 < T)
                 {
                     communicationObject.setItem("E100", true);
                 }
