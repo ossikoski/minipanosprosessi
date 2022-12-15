@@ -106,6 +106,7 @@
     <Compile Include="..\Minipanosprosessi\PIController.cs">
       <Link>PIController.cs</Link>
     </Compile>
+    <Compile Include="TestMainWindow.cs" />
     <Compile Include="TestControlSystem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

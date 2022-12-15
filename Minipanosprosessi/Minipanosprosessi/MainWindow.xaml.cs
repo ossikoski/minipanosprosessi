@@ -80,9 +80,8 @@ namespace Minipanosprosessi
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        public void settingsButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: parametreja ei voi muokata sekvenssin suorituksen aikana
             Settings settings = new Settings();
 
             // TODO Lisää validointia asetuksille?

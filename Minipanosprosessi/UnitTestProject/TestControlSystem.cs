@@ -9,6 +9,11 @@ namespace UnitTestProject
     public class TestControlSystem
     {
         ControlSystem controlSystem;
+        MainWindow mockMainWindow;
+        Communication mockCommunication;
+
+        MainWindow mainWindow;
+        Communication communication;
         public class MockMainWindow
         {
             private object lockObject;
@@ -28,15 +33,18 @@ namespace UnitTestProject
         }
         public TestControlSystem()
         {
-            var mockMainWindow = Mock.Of<MainWindow>();
-            var mockCommunication = Mock.Of<Communication>();
-            controlSystem = new ControlSystem(mockCommunication, mockMainWindow);
+            //mockMainWindow = Mock.Of<MainWindow>();
+            mainWindow = new MainWindow();
+            communication = new Communication(mainWindow);
+            mockCommunication = Mock.Of<Communication>();
+            controlSystem = new ControlSystem(communication, mainWindow);
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestStart()
         {
-            controlSystem.Start();
+            
         }
+
     }
 }
