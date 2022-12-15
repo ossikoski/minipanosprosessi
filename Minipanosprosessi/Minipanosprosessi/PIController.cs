@@ -8,17 +8,17 @@ namespace Minipanosprosessi
 {
     class PIController
     {
-        double Kp;
-        double Ki;
+        double Kp; // Proportional gain 
+        double Ki; // Integral gain
         double integrator;
         double setpoint;
-        double Ts;
+        double ts; // Cycle time (seconds)
 
-        public PIController(double kp, double ki, double ts)
+        public PIController(double kp, double ki, int tsMs)
         {
             Kp = kp;
             Ki = ki;
-            Ts = ts;
+            ts = tsMs / 1000.0; // milliseconds -> seconds
             integrator = 0;
             setpoint = 0;
         }
@@ -30,12 +30,12 @@ namespace Minipanosprosessi
 
         public double updateOutput(double measuredValue)
         {
-            double result = 0;
-            double error = 0;
+            double result;
+            double error;
 
-            error = setpoint - measuredValue;
+            error = -1*(setpoint - measuredValue);
 
-            integrator += (Ki * error * Ts);
+            integrator += (Ki * error * ts);
 
             result = Kp * error + integrator;
 

@@ -117,7 +117,15 @@ namespace Minipanosprosessi
             if (text.Contains(","))
             {
                 string[] strings = text.Split(',');
-                text = strings[0] + "," + strings[1].Substring(0, 2);
+                try
+                {
+                    text = strings[0] + "," + strings[1].Substring(0, 2);
+                }
+                catch
+                {
+
+                }
+                
             }
             text += unit;
 

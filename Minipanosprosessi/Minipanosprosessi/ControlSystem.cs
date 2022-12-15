@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using Tuni.MppOpcUaClientLib;
 
 namespace Minipanosprosessi
@@ -62,6 +63,8 @@ namespace Minipanosprosessi
         Settings settings;
         Indicators indicators;
         private object lockObject = new object();
+        private static System.Timers.Timer controllerTimer;
+        PIController pressureController;
         public ControlSystem(Communication communication, MainWindow mainWindow)
         {
             communicationObject = communication;
@@ -70,6 +73,15 @@ namespace Minipanosprosessi
             stage = Stage.impregnation;
             indicators = new Indicators();
             settings = new Settings();
+
+            // Configure pressure controller
+            double kp = 0;
+            double ki = 0.5;
+            int controlCycleMs = 100;
+            pressureController = new PIController(kp, ki, controlCycleMs);
+            controllerTimer = new System.Timers.Timer(controlCycleMs);
+            controllerTimer.Elapsed += PressureControllerEvent;
+            controllerTimer.AutoReset = true;
         }
         public void Start()
         {
@@ -155,6 +167,23 @@ namespace Minipanosprosessi
                     }
                 }
             }
+        }
+
+        private void PressureControllerEvent(Object source, ElapsedEventArgs e)
+        {
+            double control = pressureController.updateOutput(indicators.PI300);
+            int intControl = (int)control;
+
+            if(intControl < 0)
+            {
+                intControl = 0;
+            }
+            else if(intControl > 100)
+            {
+                intControl = 100;
+            }
+
+            communicationObject.setItem("V104", intControl);
         }
 
         private void RunLoop()
@@ -318,7 +347,11 @@ namespace Minipanosprosessi
 
             double dT = 0.3;
             int dp = 10;  // hPa
-            communicationObject.setItem("V104", 100);  // TODO poista
+
+            // Start pressure control
+            pressureController.setSetpoint(settings.cookingPressure);
+            controllerTimer.Start();
+            
             while (diffSeconds < Tc)
             {
                 if (indicators.TI300 > T)
@@ -331,6 +364,8 @@ namespace Minipanosprosessi
                 }
                 diffSeconds = (DateTime.Now - startTime).TotalSeconds;
             }
+            // Stop pressure control
+            controllerTimer.Stop();
             System.Console.WriteLine("Control loop done");
 
             // Phase 4
