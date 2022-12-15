@@ -72,7 +72,7 @@
             <StackPanel Grid.Column="0" Grid.Row="5" Orientation="Horizontal" 
                         Margin="0,0,0,20">
                 <TextBlock Text="Keittolämpötila (°C):" Margin="0,0,20,0" Width="210"/>
-                <TextBox x:Name="cookingTemperatureTextBox" Text="50.0" Width="100" />
+                <TextBox x:Name="cookingTemperatureTextBox" Text="22.0" Width="100" />
             </StackPanel>
 
             <Button x:Name="settingsButton" Grid.Column="0" Grid.Row="6"
@@ -162,10 +162,10 @@
                 </Image.RenderTransform>
             </Image>
 
-            <Image x:Name="V102image" Canvas.Left="530" Canvas.Top="125" 
+            <Image x:Name="V104image" Canvas.Left="530" Canvas.Top="125" 
                    Source="Media\controlValveClosed.png" />
             
-            <Image x:Name="V104image" Canvas.Left="684" Canvas.Top="567" 
+            <Image x:Name="V102image" Canvas.Left="684" Canvas.Top="567" 
                    Source="Media\controlValveClosed.png" />
 
             <Image x:Name="P200image" Canvas.Left="220" Canvas.Top="570" 
