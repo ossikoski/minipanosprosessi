@@ -7,6 +7,9 @@ using Tuni.MppOpcUaClientLib;
 
 namespace Minipanosprosessi
 {
+    /// <summary>
+    /// Interface to update connection status and process items from the simulator
+    /// </summary>
     interface IProcessObserver
     {
         // Update connection status

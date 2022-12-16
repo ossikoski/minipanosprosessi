@@ -7,6 +7,9 @@ using Tuni.MppOpcUaClientLib;
 
 namespace Minipanosprosessi
 {
+    /// <summary>
+    /// Communication class to communicate between the simulator and the system.
+    /// </summary>
     class Communication
     {
         MainWindow mainWindowObject;

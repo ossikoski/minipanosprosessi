@@ -11,25 +11,22 @@ using Tuni.MppOpcUaClientLib;
 namespace Minipanosprosessi
 {
     /// <summary>
-    /// Pulp process control logic.
+    /// To keep track of the current stage of the process.
     /// </summary>
-    /// 
     enum Stage
     {
-        /// <summary>
-        /// To keep track of the current stage of the process.
-        /// </summary>
         impregnation,
         black_liquor_fill,
         white_liquor_fill,
         cooking,
         discharge
     }
+
+    /// <summary>
+    /// Indicator values from the system
+    /// </summary>
     public struct Indicators
     {
-        /// <summary>
-        /// Indicator values
-        /// </summary>
         // starting values are: (20, 20, 0, 216, 90, 90, 0, false, true, true, true)
         public double TI100;
         public double TI300;
@@ -43,18 +40,21 @@ namespace Minipanosprosessi
         public bool LSm200;
         public bool LA100;  // false -> alarm is active and level is under 100
     }
+
+    /// <summary>
+    /// Settings for the pulp control
+    /// </summary>
     public struct Settings
     {
-        /// <summary>
-        /// Settings for the pulp control
-        /// </summary>
         public double cookingTime;
         public double cookingPressure;
         public double cookingTemperature;
         public double impregnationTime;
-
     }
 
+    /// <summary>
+    /// Control the pulp process sequence
+    /// </summary>
     class ControlSystem : IProcessObserver
     {
         Communication communicationObject;
@@ -69,7 +69,7 @@ namespace Minipanosprosessi
         System.Threading.Tasks.Task task;  // Another thread
 
         /// <summary>
-        /// 
+        /// Control the pulp process sequence
         /// </summary>
         /// <param name="communication">The Communication object</param>
         /// <param name="mainWindow">The MainWindow object</param>

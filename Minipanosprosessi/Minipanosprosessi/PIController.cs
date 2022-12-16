@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace Minipanosprosessi
 {
+    /// <summary>
+    /// A basic PI controller
+    /// Used in this project to control pressure
+    /// Works in inverted direction
+    /// </summary>
     public class PIController
     {
         double Kp; // Proportional gain 
