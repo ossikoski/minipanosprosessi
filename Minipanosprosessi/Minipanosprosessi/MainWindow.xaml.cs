@@ -93,8 +93,23 @@ namespace Minipanosprosessi
                 settings.cookingTemperature = double.Parse(cookingTemperatureTextBox.Text, CultureInfo.InvariantCulture);
                 settings.impregnationTime = double.Parse(impregnationTimeTextBox.Text, CultureInfo.InvariantCulture);
 
-                controlSystem.UpdateSettings(settings);
-                startButton.IsEnabled = true;
+                // Make sure that parameters are positive
+                if(settings.cookingTime > 0 &&
+                   settings.cookingPressure > 0 &&
+                   settings.cookingTemperature > 0 &&
+                   settings.impregnationTime > 0)
+                {
+                    controlSystem.UpdateSettings(settings);
+                    startButton.IsEnabled = true;
+
+                    showMessage("Asetukset tallennettu", "Info");
+                }
+                else
+                {
+                    showMessage("Kaikkien asetusten tulee olla positiivisia.", "Virhe");
+                }
+
+                
             }
             catch(Exception ex)
             {

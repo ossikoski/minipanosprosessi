@@ -54,7 +54,7 @@
             <StackPanel Grid.Column="0" Grid.Row="2" Orientation="Horizontal" 
                         Margin="0,0,0,10">
                 <TextBlock Text="Kyllästysaika (s):" Width="210" Margin="0,0,20,0"/>
-                <TextBox x:Name="impregnationTimeTextBox" Text="100" Width="100" />
+                <TextBox x:Name="impregnationTimeTextBox" Text="1" Width="100" />
             </StackPanel>
             
             <StackPanel Grid.Column="0" Grid.Row="3" Orientation="Horizontal" 
