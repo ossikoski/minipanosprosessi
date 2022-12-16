@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Minipanosprosessi
 {
-    class PIController
+    public class PIController
     {
         double Kp; // Proportional gain 
         double Ki; // Integral gain
@@ -17,6 +17,7 @@ namespace Minipanosprosessi
         /// <summary>
         /// A basic PI controller
         /// Used in this project to control pressure
+        /// Works in inverted direction
         /// </summary>
         /// <param name="kp">Proportional gain</param>
         /// <param name="ki">Integral gain</param>
@@ -49,7 +50,7 @@ namespace Minipanosprosessi
             double result;
             double error;
 
-            error = -1*(setpoint - measuredValue);
+            error = -1*(setpoint - measuredValue); // Inverted direction control
 
             integrator += (Ki * error * ts);
 
