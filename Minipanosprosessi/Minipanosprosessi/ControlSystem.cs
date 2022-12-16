@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Diagnostics;
 using Tuni.MppOpcUaClientLib;
 
 namespace Minipanosprosessi
@@ -110,10 +111,12 @@ namespace Minipanosprosessi
         /// </summary>
         public void Stop()
         {
+            System.Console.WriteLine("Stop called");
             lock (lockObject)
             {
                 isStarted = false;
             }
+            Thread.Sleep(100);
             communicationObject.setItem("V102", 0);
             communicationObject.setItem("V104", 0);
             communicationObject.setItem("V103", false);
@@ -130,6 +133,7 @@ namespace Minipanosprosessi
             communicationObject.setItem("E100", false);
 
             mainWindowObject.setSequenceStage("Keskeytetty");
+            stage = Stage.impregnation;
         }
 
         /// <summary>
@@ -138,6 +142,7 @@ namespace Minipanosprosessi
         /// <param name="settingsToSet">Settings struct that includes the setting values.</param>
         public void UpdateSettings(Settings settingsToSet)
         {
+            System.Console.WriteLine("ControlSystem settings changed");
             lock (lockObject)
             {
                 settings = settingsToSet;
@@ -258,7 +263,8 @@ namespace Minipanosprosessi
                 }
                 if(stage == Stage.discharge)
                 {
-                    stage = Stage.impregnation;
+                    Stop();
+                    mainWindowObject.setSequenceStage("Valmis");
                     break;
                 }
                 lock (lockObject)
@@ -266,6 +272,7 @@ namespace Minipanosprosessi
                     stage++;
                 }
             }
+            System.Console.WriteLine("RunLoop done");
         }
 
         /// <summary>
@@ -282,7 +289,7 @@ namespace Minipanosprosessi
             communicationObject.setItem("V301", true);
 
             System.Console.WriteLine("Waiting for LS+300");
-            while (!indicators.LSp300){ }  // TODO: Failsafe?, miten toimii säikeiden kanssa?
+            while (!indicators.LSp300){ if (!isStarted) { return; } }
             System.Console.WriteLine("LS+300 activated");
 
             // Phase 2:
@@ -291,9 +298,15 @@ namespace Minipanosprosessi
             communicationObject.setItem("V401", false);
 
             System.Console.WriteLine("Waiting impregnation time");
-            // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana:
+            // Ei tarvi lukkoa koska asetuksia ei voi muuttaa sekvenssin aikana
             int Ti = (int)settings.impregnationTime * 1000;
-            Thread.Sleep(Ti);
+            var timer = new Stopwatch();
+            timer.Start();
+            TimeSpan timeTaken = timer.Elapsed;
+            while (timeTaken.TotalMilliseconds < Ti) { 
+                if (!isStarted) { return; } 
+                timeTaken = timer.Elapsed;
+            }
             System.Console.WriteLine("Impregnation time passed");
 
             // Phase 3
@@ -323,7 +336,7 @@ namespace Minipanosprosessi
             communicationObject.setItem("V404", true);
 
             System.Console.WriteLine("Waiting for LI400 < 35");
-            while (indicators.LI400 >= 35) { }  // TODO Failsafe?
+            while (indicators.LI400 >= 35) { if (!isStarted) { return; } }
             System.Console.WriteLine("LI400 < 35 done");
 
             // Phase 2
@@ -350,7 +363,7 @@ namespace Minipanosprosessi
             communicationObject.setItem("P100", 100);
 
             System.Console.WriteLine("Waiting for LI400 > 80");
-            while (indicators.LI400 <= 80) { }  // TODO Failsafe?
+            while (indicators.LI400 <= 80) { if (!isStarted) { return; } }
             System.Console.WriteLine("LI400 > 80 done");
 
             // Phase 2
@@ -382,7 +395,7 @@ namespace Minipanosprosessi
             double p = settings.cookingPressure;
             double Tc = settings.cookingTime;
             System.Console.WriteLine("Waiting for TI100 == cookingTemperature");
-            while (indicators.TI100 < T) { } // TODO Failsafe?
+            while (indicators.TI100 < T + 0.4) { if (!isStarted) { return; } }
             System.Console.WriteLine("TI100 == cookingTemperature done");
 
             // Phase 2
@@ -396,7 +409,7 @@ namespace Minipanosprosessi
 
             System.Console.WriteLine("Control loop for TI300 = cookingTemperature and PI300 = cookingPressure for cookingTime");
             // Phase 3 lämpötila säätö TI300 == T ja paineen säätö PI300 == p ajan Tc
-            var startTime = DateTime.Now;
+            DateTime startTime = DateTime.Now;
             double diffSeconds = 0;
 
             // Start pressure control
@@ -405,7 +418,9 @@ namespace Minipanosprosessi
             
             while (diffSeconds < Tc)
             {
-                if (indicators.TI100 > T + 0.3)
+                if (!isStarted) { return; }
+
+                if (indicators.TI100 > T)
                 {
                     communicationObject.setItem("E100", false);
                 }
@@ -414,10 +429,28 @@ namespace Minipanosprosessi
                     communicationObject.setItem("E100", true);
                 }
                 diffSeconds = (DateTime.Now - startTime).TotalSeconds;
+
+                // Requirements: T +-0.3, p +-10 hPa
+                if (indicators.TI300 > T + 0.3 || indicators.TI300 < T - 0.3)
+                {
+                    if(diffSeconds > 5)
+                    {
+                        System.Console.WriteLine("Temperature differed over 0.3 degrees.");
+                    }
+                    startTime = DateTime.Now;
+                }
+                if (indicators.PI300 > p + 10 || indicators.PI300 < p - 10)
+                {
+                    if (diffSeconds > 5)
+                    {
+                        System.Console.WriteLine("Pressure differed over 10 hPa.");
+                    }
+                    startTime = DateTime.Now;
+                }
             }
             // Stop pressure control
             controllerTimer.Stop();
-            System.Console.WriteLine("Control loop done");
+            System.Console.WriteLine("Control loop done.");
 
             // Phase 4
             communicationObject.setItem("V104", 0);
@@ -452,7 +485,7 @@ namespace Minipanosprosessi
 
             // "LS-300 is deactivated"
             System.Console.WriteLine("Waiting for LS-300 to deactivate");
-            while (indicators.LSm300) { } // TODO Failsafe?
+            while (indicators.LSm300){ if (!isStarted) { return; } }
             System.Console.WriteLine("LS-300 deactivated");
 
             // Phase 2

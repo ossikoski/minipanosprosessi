@@ -283,6 +283,10 @@ namespace Minipanosprosessi
                 {
                     startButton.IsEnabled = false;
                 });
+                stopButton.Dispatcher.Invoke(() =>
+                {
+                    stopButton.IsEnabled = false;
+                });
                 connectButton.Dispatcher.Invoke(() =>
                 {
                     connectButton.IsEnabled = true;
@@ -293,7 +297,7 @@ namespace Minipanosprosessi
                     connectionLight.Fill = Brushes.Yellow;
                 });
             }
-            else
+            else  // status Disconnected tai Unknown
             {
                 // TODO: vaihda Invoke -> BeginInvoke
                 settingsButton.Dispatcher.Invoke(() =>
@@ -303,6 +307,10 @@ namespace Minipanosprosessi
                 startButton.Dispatcher.Invoke(() =>
                 {
                     startButton.IsEnabled = false;
+                });
+                stopButton.Dispatcher.Invoke(() =>
+                {
+                    stopButton.IsEnabled = false;
                 });
                 connectButton.Dispatcher.Invoke(() =>
                 {
